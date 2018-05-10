@@ -19,7 +19,7 @@ function MPR_Options:Initialize()
 
     MPR_Options:SetPoint("CENTER",UIParent)
     MPR_Options:SetWidth(425)
-    MPR_Options:SetHeight(315)
+    MPR_Options:SetHeight(360)
     MPR_Options:EnableMouse(true)
     MPR_Options:SetMovable(true)
     MPR_Options:RegisterForDrag("LeftButton")
@@ -45,141 +45,48 @@ function MPR_Options:Initialize()
     MPR_Options_BtnClose:SetScript("OnClick", function(self) MPR_Options:Hide() end)
 
     --[[ General ]]--
-    MPR_Options:NewFS("General","00CCFF",16,-30)
-    MPR_Options:NewCB("Self",    "1E90FF",    "SELF",14,-41)        -- [ ] Self
-    MPR_Options:NewCB("Raid",    "EE7600",    "RAID",54,-41)        -- [ ] Raid
-    MPR_Options:NewCB("Say",    "FFFFFF",    "SAY",100,-41)        -- [ ] Say
-    MPR_Options:NewCB("Whisper","DA70D6",    "WHISPER",140,-41)    -- [ ] Whisper
+    local line1_offsetY = 14
+    local line2_offsetY = 28
+    local line3_offsetY = 42
+    local general_posY = -30
+    MPR_Options:NewFS("General","00CCFF",16,general_posY)
+    local genLine1_posY = general_posY-line1_offsetY
+    MPR_Options:NewCB("Self",    "1E90FF",    "SELF",16,genLine1_posY)        -- [ ] Self
+    MPR_Options:NewCB("Raid",    "EE7600",    "RAID",56,genLine1_posY)        -- [ ] Raid
+    MPR_Options:NewCB("Say",     "FFFFFF",    "SAY",100,genLine1_posY)        -- [ ] Say
+    MPR_Options:NewCB("Whisper", "DA70D6",    "WHISPER",140,genLine1_posY)    -- [ ] Whisper
 
-    -- Report:
-    MPR_Options:NewFS("Reporting:","20B2AA",16,-60)
-    MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",14,-71)            -- [ ] Dispels
-    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",89,-71)    -- [ ] Mass Dispels
+    -- Reporting
+    local reporting_posY = general_posY-34
+    MPR_Options:NewFS("Reporting","20B2AA",16,reporting_posY)
+    local repLine1_posY = reporting_posY-line1_offsetY
+    local repLine2_posY = reporting_posY-line2_offsetY
+    MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)             -- [ ] Dispels
+    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)    -- [ ] Mass Dispels
+    MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)      -- [ ] Parry Haste
 
-    -- Report in:
-    MPR_Options:NewFS("Reporting in:","3CB371",16,-90)
-    MPR_Options:NewCB("Dungeon",nil,"REPORTIN_PARTY",14,-101)
-    MPR_Options:NewCB("Raid Instance",nil,"REPORTIN_RAIDINSTANCE",85,-101)
-    MPR_Options:NewCB("Battleground",nil,"REPORTIN_BATTLEGROUND",14,-115)
-    MPR_Options:NewCB("Arena",nil,"REPORTIN_ARENA",100,-115)
-    MPR_Options:NewCB("Outside",nil,"REPORTIN_OUTSIDE",152,-115)
-
-    -- Player Deaths
-    MPR_Options:NewFS("Player Deaths","22FF00",16,-133)
-    MPR_Options:NewCB("Enable",  "FFFFFF",    "PD_REPORT",104,-129)     -- [ ] Enable reporting
-    MPR_Options:NewCB("Self",    "1E90FF",    "PD_SELF",14,-144)       -- [ ] Self
-    MPR_Options:NewCB("Raid",    "EE7600",    "PD_RAID",54,-144)       -- [ ] Raid
-    MPR_Options:NewCB("Whisper", "DA70D6",    "PD_WHISPER",100,-144)   -- [ ] Whisper
-    MPR_Options:NewCB("Guild",   "40FF40",    "PD_GUILD",160,-144)     -- [ ] Guild
-
-    -- Report deaths ...
-    MPR_Options:NewFS("Report deaths","FFAA00",16,-163)
-
-    -- Report!
-    MPR_Options.BTN_REPORT = CreateFrame("button","BtnReport", MPR_Options, "UIPanelButtonTemplate")
-    MPR_Options.BTN_REPORT:SetHeight(18)
-    MPR_Options.BTN_REPORT:SetWidth(58)
-    MPR_Options.BTN_REPORT:SetPoint("TOPLEFT", 150, -199)
-    MPR_Options.BTN_REPORT:SetText("Report!")
-    MPR_Options.BTN_REPORT:SetScript("OnClick", function(self)
-        if MPR.Settings["DEATHREPORT_CHANNEL"] and tonumber(MPR_Options.FS_ID:GetText()) then
-            MPR:DeathReport(MPR.Settings["DEATHREPORT_CHANNEL"], tonumber(MPR_Options.FS_ID:GetText()))
-        end
-    end)
-
-    MPR_Options.FS_ID = MPR_Options:CreateFontString("FS_ID", "ARTWORK", "GameFontNormal")
-    MPR_Options.FS_ID:SetPoint("TOPLEFT", 102, -163)
-    MPR_Options.FS_ID:SetTextColor(1,1,1)
-    MPR_Options.FS_ID:SetText(#MPR.DataDeaths)
-    MPR_Options.FS_ID:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-
-    MPR_Options:SetScript("OnShow", function(self)
-        MPR_Options.FS_ID:SetText(#MPR.DataDeaths)
-        local Data = MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())]
-        MPR_Options.FS_ID_NAME:SetText(Data and "|cFF"..(Data.Color or "FFFFFF")..Data.Name.."|r|cFFBEBEBE: "..#Data.Deaths.." deaths,|r" or "")
-        MPR_Options.FS_ID_TIME:SetText(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())] and (MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeStart or "unknown").." - "..(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeEnd or "unknown") or "")
-    end)
-
-    MPR_Options.BTN_ID_LESS = CreateFrame("button","BTN_ID_LESS", MPR_Options, "UIPanelButtonTemplate")
-    MPR_Options.BTN_ID_LESS:SetHeight(14)
-    MPR_Options.BTN_ID_LESS:SetWidth(14)
-    MPR_Options.BTN_ID_LESS:SetPoint("TOPLEFT", "FS_ID", "TOPRIGHT", 2, 0)
-    MPR_Options.BTN_ID_LESS:SetText("-")
-    MPR_Options.BTN_ID_LESS:SetScript("OnShow", function(self) MPR_Options:ID_HandleOnShow() end)
-    MPR_Options.BTN_ID_LESS:SetScript("OnClick", function(self) MPR_Options:ID_HandleOnClick(-1) end)
-
-    MPR_Options.BTN_ID_MORE = CreateFrame("button","BTN_ID_MORE", MPR_Options, "UIPanelButtonTemplate")
-    MPR_Options.BTN_ID_MORE:SetHeight(14)
-    MPR_Options.BTN_ID_MORE:SetWidth(14)
-    MPR_Options.BTN_ID_MORE:SetPoint("TOPLEFT", "BTN_ID_LESS", "TOPRIGHT", 1, 0)
-    MPR_Options.BTN_ID_MORE:SetText("+")
-    MPR_Options.BTN_ID_MORE:SetScript("OnShow", function(self) MPR_Options:ID_HandleOnShow() end)
-    MPR_Options.BTN_ID_MORE:SetScript("OnClick", function(self) MPR_Options:ID_HandleOnClick(1) end)
-
-    MPR_Options.BTN_CLEAR_DEATHLOG = CreateFrame("button","BTN_CLEAR_DEATHLOG", MPR_Options, "UIPanelButtonTemplate")
-    MPR_Options.BTN_CLEAR_DEATHLOG:SetHeight(14)
-    MPR_Options.BTN_CLEAR_DEATHLOG:SetWidth(44)
-    MPR_Options.BTN_CLEAR_DEATHLOG:SetPoint("TOPLEFT", "BTN_ID_MORE", "TOPRIGHT", 8, 0)
-    MPR_Options.BTN_CLEAR_DEATHLOG:SetText("Reset")
-    MPR_Options.BTN_CLEAR_DEATHLOG:SetScript("OnClick", function(self) MPR:ClearDeathLog() end)
-
-    MPR_Options:NewCB("Enable logging","FFFFFF","PD_LOG",16,-174)   -- [ ] Enable logging
-
-    MPR_Options.FS_ID_NAME = MPR_Options:CreateFontString("FS_ID_NAME", "ARTWORK", "GameFontNormal")
-    MPR_Options.FS_ID_NAME:SetPoint("TOPLEFT", 16, -191)
-    local Data = MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())]
-    MPR_Options.FS_ID_NAME:SetText(Data and "|cFF"..(Data.Color or "FFFFFF")..Data.Name.."|r|cFFBEBEBE: "..#Data.Deaths.." deaths,|r" or "")
-    MPR_Options.FS_ID_NAME:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
-
-    MPR_Options.FS_ID_TIME = MPR_Options:CreateFontString("FS_ID_TIME", "ARTWORK", "GameFontNormal")
-    MPR_Options.FS_ID_TIME:SetPoint("TOPLEFT", "FS_ID_NAME", "BOTTOMLEFT", 0, -1)
-    MPR_Options.FS_ID_TIME:SetTextColor(1,1,1)
-    MPR_Options.FS_ID_TIME:SetTextColor(190/255,190/255,190/255)
-    MPR_Options.FS_ID_TIME:SetText(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())] and (MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeStart or "unknown").." - "..(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeEnd or "unknown") or "")
-    MPR_Options.FS_ID_TIME:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
-
-    -- SELF
-    MPR_Options.CB_Self = CreateFrame("CheckButton", "CB_Self", MPR_Options, "UICheckButtonTemplate")
-    MPR_Options.CB_Self:SetWidth(20)
-    MPR_Options.CB_Self:SetHeight(20)
-    MPR_Options.CB_Self:SetPoint("TOPLEFT", 16, -213)
-    _G["CB_SelfText"]:SetText("|cFF1E90FFSelf|r")
-    MPR_Options.CB_Self:SetScript("OnShow",  function(self) MPR_Options.CB_Self:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Self") end)
-    MPR_Options.CB_Self:SetScript("OnClick", function(self)
-        MPR_Options.CB_Self:SetChecked(true); MPR_Options.CB_Raid:SetChecked(false); MPR_Options.CB_Guild:SetChecked(false);
-        MPR.Settings["DEATHREPORT_CHANNEL"] = "Self"
-    end)
-    -- RAID
-    MPR_Options.CB_Raid = CreateFrame("CheckButton", "CB_Raid", MPR_Options, "UICheckButtonTemplate")
-    MPR_Options.CB_Raid:SetWidth(20)
-    MPR_Options.CB_Raid:SetHeight(20)
-    MPR_Options.CB_Raid:SetPoint("TOPLEFT", 54, -213)
-    _G["CB_RaidText"]:SetText("|cFFEE7600Raid|r")
-    MPR_Options.CB_Raid:SetScript("OnShow",  function(self) MPR_Options.CB_Raid:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Raid") end)
-    MPR_Options.CB_Raid:SetScript("OnClick", function(self)
-        MPR_Options.CB_Self:SetChecked(false); MPR_Options.CB_Raid:SetChecked(true); MPR_Options.CB_Guild:SetChecked(false);
-        MPR.Settings["DEATHREPORT_CHANNEL"] = "Raid"
-    end)
-    -- GUILD
-    MPR_Options.CB_Guild = CreateFrame("CheckButton", "CB_Guild", MPR_Options, "UICheckButtonTemplate")
-    MPR_Options.CB_Guild:SetWidth(20)
-    MPR_Options.CB_Guild:SetHeight(20)
-    MPR_Options.CB_Guild:SetPoint("TOPLEFT", 100, -213)
-    _G["CB_GuildText"]:SetText("|cFF40FF40Guild|r")
-    MPR_Options.CB_Guild:SetScript("OnShow",  function(self) MPR_Options.CB_Guild:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Guild") end)
-    MPR_Options.CB_Guild:SetScript("OnClick", function(self)
-        MPR_Options.CB_Self:SetChecked(false); MPR_Options.CB_Raid:SetChecked(false); MPR_Options.CB_Guild:SetChecked(true);
-        MPR.Settings["DEATHREPORT_CHANNEL"] = "Guild"
-    end)
+    -- Reporting in
+    local reporting_in_posY = reporting_posY-50
+    MPR_Options:NewFS("Reporting in","3CB371",16,reporting_in_posY)
+    local reporting_in_line1_posY = reporting_in_posY-line1_offsetY
+    local reporting_in_line2_posY = reporting_in_posY-line2_offsetY
+    MPR_Options:NewCB("Dungeon",nil,"REPORTIN_PARTY",16,reporting_in_line1_posY)
+    MPR_Options:NewCB("Raid Instance",nil,"REPORTIN_RAIDINSTANCE",87,reporting_in_line1_posY)
+    MPR_Options:NewCB("Battleground",nil,"REPORTIN_BATTLEGROUND",16,reporting_in_line2_posY)
+    MPR_Options:NewCB("Arena",nil,"REPORTIN_ARENA",102,reporting_in_line2_posY)
+    MPR_Options:NewCB("Outside",nil,"REPORTIN_OUTSIDE",154,reporting_in_line2_posY)
 
     --[[ Aura Info ]]--
-    MPR_Options:NewFS("Aura Info","FF2200",16,-234)
-    MPR_Options:NewCB("Enable","FFFFFF","AURAINFO",16,-246)
+    local aura_info_posY = reporting_in_posY-50
+    local aura_info_line1_offsetY = aura_info_posY-line1_offsetY
+    local aura_info_line2_offsetY = aura_info_posY-line2_offsetY
+    MPR_Options:NewFS("Aura Info","FF2200",16,aura_info_posY)
+    MPR_Options:NewCB("Enable","FFFFFF","AURAINFO",16,aura_info_line1_offsetY)
 
     local Button = CreateFrame("button","BtnToggleAuraInfo", MPR_Options, "UIPanelButtonTemplate")
     Button:SetHeight(18)
     Button:SetWidth(60)
-    Button:SetPoint("TOPLEFT", 14, -264)
+    Button:SetPoint("TOPLEFT", 16, aura_info_line2_offsetY-2)
     Button:SetText("Show")
     Button:SetScript("OnShow", function(self) Button:SetText(MPR_AuraInfo:IsVisible() and "Hide" or "Show") end)
     Button:SetScript("OnClick", function(self)
@@ -196,30 +103,27 @@ function MPR_Options:Initialize()
     MPR_Slider = CreateFrame("Slider", "MPR_Slider", MPR_Options, "OptionsSliderTemplate")
     MPR_Slider:SetWidth(120)
     MPR_Slider:SetHeight(20)
-    MPR_Slider:SetPoint('TOPLEFT', 84, -248)
+    MPR_Slider:SetPoint('TOPLEFT', 84, aura_info_line1_offsetY-3)
     MPR_Slider:SetOrientation('HORIZONTAL')
-
     MPR_Slider:SetMinMaxValues(0.1, 3)
     MPR_Slider:SetValueStep(0.1)
-
     MPR_Slider:SetValue(MPR.Settings["UPDATEFREQUENCY"])
-
     _G[MPR_Slider:GetName().."Low"]:SetText("0.1")
     _G[MPR_Slider:GetName().."High"]:SetText("3")
     _G[MPR_Slider:GetName().."Text"]:SetText("|cFFffffffUpdate Period: "..round(MPR_Slider:GetValue(),1).."s|r")
-
     MPR_Slider:SetScript("OnValueChanged",function()
         _G[MPR_Slider:GetName()..'Text']:SetText("|cFFffffffUpdate Period: "..round(MPR_Slider:GetValue(),1).."s|r")
         MPR.Settings["UPDATEFREQUENCY"] = round(MPR_Slider:GetValue(),1)
     end)
 
     -- Timers
-    MPR_Options:NewFS("Timers","1E90FF",16,-284)
-    MPR_Options:NewCB("Enable","FFFFFF","TIMERS",60,-282)
+    local timers_posY = aura_info_posY-50
+    MPR_Options:NewFS("Timers","1E90FF",16,timers_posY)
+    MPR_Options:NewCB("Enable","FFFFFF","TIMERS",64,timers_posY+2)
     local Button2 = CreateFrame("button","BtnToggleTimers", MPR_Options, "UIPanelButtonTemplate")
-    Button2:SetHeight(18)
     Button2:SetWidth(60)
-    Button2:SetPoint("TOPLEFT", 116, -282)
+    Button2:SetHeight(18)
+    Button2:SetPoint("TOPLEFT", 120, timers_posY+1)
     Button2:SetText("Show")
     Button2:SetScript("OnShow", function(self) Button2:SetText(MPR_Timers:IsVisible() and "Hide" or "Show") end)
     Button2:SetScript("OnClick", function(self)
@@ -227,40 +131,156 @@ function MPR_Options:Initialize()
         Button2:SetText(MPR_Timers:IsVisible() and "Hide" or "Show")
     end)
 
+    -- Player Deaths
+    local player_deaths_posY = timers_posY-20
+    MPR_Options:NewFS("Player Deaths","22FF00",16,player_deaths_posY)
+    MPR_Options:NewCB("Enable",  "FFFFFF",    "PD_REPORT",104,player_deaths_posY+2)  -- [ ] Enable
+    local player_deaths_line1_posY = player_deaths_posY-line1_offsetY
+    MPR_Options:NewCB("Self",    "1E90FF",    "PD_SELF",16,player_deaths_line1_posY)       -- [ ] Self
+    MPR_Options:NewCB("Raid",    "EE7600",    "PD_RAID",56,player_deaths_line1_posY)       -- [ ] Raid
+    MPR_Options:NewCB("Whisper", "DA70D6",    "PD_WHISPER",100,player_deaths_line1_posY)   -- [ ] Whisper
+    MPR_Options:NewCB("Guild",   "40FF40",    "PD_GUILD",160,player_deaths_line1_posY)     -- [ ] Guild
+
+    -- Report Deaths
+    local report_deaths_posY = player_deaths_posY-36
+    MPR_Options:NewFS("Report Deaths","FFAA00",16,report_deaths_posY)
+    MPR_Options:NewCB("Enable logging","FFFFFF","PD_LOG",108,report_deaths_posY+2)     -- [ ] Enable logging
+
+    -- SELF
+    local report_deaths_btn_posY = report_deaths_posY-line1_offsetY
+    MPR_Options.CB_Self = CreateFrame("CheckButton", "CB_Self", MPR_Options, "UICheckButtonTemplate")
+    MPR_Options.CB_Self:SetWidth(20)
+    MPR_Options.CB_Self:SetHeight(20)
+    MPR_Options.CB_Self:SetPoint("TOPLEFT", 16, report_deaths_btn_posY)
+    _G["CB_SelfText"]:SetText("|cFF1E90FFSelf|r")
+    MPR_Options.CB_Self:SetScript("OnShow",  function(self) MPR_Options.CB_Self:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Self") end)
+    MPR_Options.CB_Self:SetScript("OnClick", function(self)
+        MPR_Options.CB_Self:SetChecked(true); MPR_Options.CB_Raid:SetChecked(false); MPR_Options.CB_Guild:SetChecked(false);
+        MPR.Settings["DEATHREPORT_CHANNEL"] = "Self"
+    end)
+    -- RAID
+    MPR_Options.CB_Raid = CreateFrame("CheckButton", "CB_Raid", MPR_Options, "UICheckButtonTemplate")
+    MPR_Options.CB_Raid:SetWidth(20)
+    MPR_Options.CB_Raid:SetHeight(20)
+    MPR_Options.CB_Raid:SetPoint("TOPLEFT", 56, report_deaths_btn_posY)
+    _G["CB_RaidText"]:SetText("|cFFEE7600Raid|r")
+    MPR_Options.CB_Raid:SetScript("OnShow",  function(self) MPR_Options.CB_Raid:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Raid") end)
+    MPR_Options.CB_Raid:SetScript("OnClick", function(self)
+        MPR_Options.CB_Self:SetChecked(false); MPR_Options.CB_Raid:SetChecked(true); MPR_Options.CB_Guild:SetChecked(false);
+        MPR.Settings["DEATHREPORT_CHANNEL"] = "Raid"
+    end)
+    -- GUILD
+    MPR_Options.CB_Guild = CreateFrame("CheckButton", "CB_Guild", MPR_Options, "UICheckButtonTemplate")
+    MPR_Options.CB_Guild:SetWidth(20)
+    MPR_Options.CB_Guild:SetHeight(20)
+    MPR_Options.CB_Guild:SetPoint("TOPLEFT", 100, report_deaths_btn_posY)
+    _G["CB_GuildText"]:SetText("|cFF40FF40Guild|r")
+    MPR_Options.CB_Guild:SetScript("OnShow",  function(self) MPR_Options.CB_Guild:SetChecked(MPR.Settings["DEATHREPORT_CHANNEL"] == "Guild") end)
+    MPR_Options.CB_Guild:SetScript("OnClick", function(self)
+        MPR_Options.CB_Self:SetChecked(false); MPR_Options.CB_Raid:SetChecked(false); MPR_Options.CB_Guild:SetChecked(true);
+        MPR.Settings["DEATHREPORT_CHANNEL"] = "Guild"
+    end)
+
+    local enc_posY = report_deaths_posY-32
+    MPR_Options.BTN_CLEAR_DEATHLOG = CreateFrame("button","BTN_CLEAR_DEATHLOG", MPR_Options, "UIPanelButtonTemplate")
+    MPR_Options.BTN_CLEAR_DEATHLOG:SetHeight(14)
+    MPR_Options.BTN_CLEAR_DEATHLOG:SetWidth(44)
+    MPR_Options.BTN_CLEAR_DEATHLOG:SetPoint("TOPLEFT", 17, enc_posY)
+    MPR_Options.BTN_CLEAR_DEATHLOG:SetText("Reset")
+    MPR_Options.BTN_CLEAR_DEATHLOG:SetScript("OnClick", function(self) MPR:ClearDeathLog() end)
+
+    MPR_Options.BTN_ID_LESS = CreateFrame("button","BTN_ID_LESS", MPR_Options, "UIPanelButtonTemplate")
+    MPR_Options.BTN_ID_LESS:SetHeight(14)
+    MPR_Options.BTN_ID_LESS:SetWidth(14)
+    MPR_Options.BTN_ID_LESS:SetPoint("TOPLEFT", "BTN_CLEAR_DEATHLOG", "TOPRIGHT", 5, 0)
+    MPR_Options.BTN_ID_LESS:SetText("-")
+    MPR_Options.BTN_ID_LESS:SetScript("OnShow", function(self) MPR_Options:ID_HandleOnShow() end)
+    MPR_Options.BTN_ID_LESS:SetScript("OnClick", function(self) MPR_Options:ID_HandleOnClick(-1) end)
+
+    MPR_Options.BTN_ID_MORE = CreateFrame("button","BTN_ID_MORE", MPR_Options, "UIPanelButtonTemplate")
+    MPR_Options.BTN_ID_MORE:SetHeight(14)
+    MPR_Options.BTN_ID_MORE:SetWidth(14)
+    MPR_Options.BTN_ID_MORE:SetPoint("TOPLEFT", "BTN_ID_LESS", "TOPRIGHT", 2, 0)
+    MPR_Options.BTN_ID_MORE:SetText("+")
+    MPR_Options.BTN_ID_MORE:SetScript("OnShow", function(self) MPR_Options:ID_HandleOnShow() end)
+    MPR_Options.BTN_ID_MORE:SetScript("OnClick", function(self) MPR_Options:ID_HandleOnClick(1) end)
+
+    MPR_Options.FS_ID = MPR_Options:CreateFontString("FS_ID", "ARTWORK", "GameFontNormal")
+    MPR_Options.FS_ID:SetPoint("TOPLEFT", "BTN_ID_MORE", "TOPRIGHT", 3, 0)
+    MPR_Options.FS_ID:SetTextColor(1,1,1)
+    MPR_Options.FS_ID:SetText(#MPR.DataDeaths)
+    MPR_Options.FS_ID:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+
+    MPR_Options:SetScript("OnShow", function(self)
+        MPR_Options.FS_ID:SetText(#MPR.DataDeaths)
+        local Data = MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())]
+        MPR_Options.FS_ID_NAME:SetText(Data and "|cFF"..(Data.Color or "FFFFFF")..Data.Name.."|r|cFFBEBEBE: "..#Data.Deaths.." deaths,|r" or "")
+        MPR_Options.FS_ID_TIME:SetText(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())] and (MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeStart or "unknown").." - "..(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeEnd or "unknown") or "")
+    end)
+
+    -- Report!
+    MPR_Options.BTN_REPORT = CreateFrame("button","BtnReport", MPR_Options, "UIPanelButtonTemplate")
+    MPR_Options.BTN_REPORT:SetHeight(18)
+    MPR_Options.BTN_REPORT:SetWidth(58)
+    MPR_Options.BTN_REPORT:SetPoint("TOPLEFT", 150, report_deaths_btn_posY)
+    MPR_Options.BTN_REPORT:SetText("Report!")
+    MPR_Options.BTN_REPORT:SetScript("OnClick", function(self)
+        if MPR.Settings["DEATHREPORT_CHANNEL"] and tonumber(MPR_Options.FS_ID:GetText()) then
+            MPR:DeathReport(MPR.Settings["DEATHREPORT_CHANNEL"], tonumber(MPR_Options.FS_ID:GetText()))
+        end
+    end)
+
+    -- Encounter
+    local death_data_text_posY = report_deaths_posY-48
+    MPR_Options.FS_ID_NAME = MPR_Options:CreateFontString("FS_ID_NAME", "ARTWORK", "GameFontNormal")
+    MPR_Options.FS_ID_NAME:SetPoint("TOPLEFT", 18, death_data_text_posY)
+    local Data = MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())]
+    MPR_Options.FS_ID_NAME:SetText(Data and "|cFF"..(Data.Color or "FFFFFF")..Data.Name.."|r|cFFBEBEBE: "..#Data.Deaths.." deaths,|r" or "")
+    MPR_Options.FS_ID_NAME:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+
+    MPR_Options.FS_ID_TIME = MPR_Options:CreateFontString("FS_ID_TIME", "ARTWORK", "GameFontNormal")
+    MPR_Options.FS_ID_TIME:SetPoint("TOPLEFT", "FS_ID_NAME", "BOTTOMLEFT", 0, -1)
+    MPR_Options.FS_ID_TIME:SetTextColor(1,1,1)
+    MPR_Options.FS_ID_TIME:SetTextColor(190/255,190/255,190/255)
+    MPR_Options.FS_ID_TIME:SetText(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())] and (MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeStart or "unknown").." - "..(MPR.DataDeaths[tonumber(MPR_Options.FS_ID:GetText())].GameTimeEnd or "unknown") or "")
+    MPR_Options.FS_ID_TIME:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+
     --[[ Miscellaneous ]]--
-    MPR_Options:NewFS("Miscellaneous","00CCFF",216,-30)
-    MPR_Options:NewCB("Automatic combat log clear",nil,"CCL_ONLOAD",214,-44)    -- [ ] ClearEntriesOnLoad
-    MPR_Options:NewCB("Spell Icons (|r\124T"..select(3, GetSpellInfo(33054))..":12:12:0:0:64:64:5:59:5:59\124t "..GetSpellLink(33054)..")",nil,"ICONS",214,-58) -- [ ] Spell Icons
+    MPR_Options:NewFS("Miscellaneous","00CCFF",216,general_posY)
+    MPR_Options:NewCB("Automatic combat log clear",nil,"CCL_ONLOAD",214,general_posY-line1_offsetY)    -- [ ] ClearEntriesOnLoad
+    MPR_Options:NewCB("Spell Icons (|r\124T"..select(3, GetSpellInfo(33054))..":12:12:0:0:64:64:5:59:5:59\124t "..GetSpellLink(33054)..")",nil,"ICONS",214,general_posY-line2_offsetY) -- [ ] Spell Icons
 
     -- Masterloot
-    MPR_Options:NewFS("Masterloot","3CB371",216,-77)
-    MPR_Options:NewCB("Report |cFFB048F8epic|r items in loot",nil,"REPORT_LOOT", 214, -88)    -- [ ] ReportLoot
-    MPR_Options:NewCB("Only when BoP in loot",nil,"nil", 234, -102) -- [ ] ReportOnlyWhenBOP    REPORT_LOOT_BOP_ONLY
-    MPR_Options:NewCB("Add BiS information",nil,"REPORT_LOOT_BIS_INFO", 234, -116) -- [ ] AddClassBISinfo
+    local ml_posY = general_posY-48
+    MPR_Options:NewFS("Masterloot","3CB371",216,ml_posY)
+    MPR_Options:NewCB("Report |cFFB048F8epic|r items in loot",nil,"REPORT_LOOT", 214, ml_posY-line1_offsetY)    -- [ ] ReportLoot
+    MPR_Options:NewCB("Only when BoP in loot",nil,"nil", 234, ml_posY-line2_offsetY)   -- [ ] ReportOnlyWhenBOP    REPORT_LOOT_BOP_ONLY
+    MPR_Options:NewCB("Add BiS information",nil,"REPORT_LOOT_BIS_INFO", 234, ml_posY-line3_offsetY)   -- [ ] AddClassBISinfo
 
     -- Window Style
-    MPR_Options:NewFS("Window Style","FF9912",216,-135)
-    MPR_Options:NewFS("Border Color:","FFFFFF",219,-148)
-    -- BLACK (1E90FF / 0 0 0)
-    MPR_Options.CB_Black = CreateFrame("CheckButton", "CB_Black", MPR_Options, "UICheckButtonTemplate")
-    MPR_Options.CB_Black:SetWidth(20)
-    MPR_Options.CB_Black:SetHeight(20)
-    MPR_Options.CB_Black:SetPoint("TOPLEFT", 307, -146)
-    _G["CB_BlackText"]:SetTextColor(0/255, 0/255, 0/255)
-    _G["CB_BlackText"]:SetText("Black")
-    MPR_Options.CB_Black:SetScript("OnShow",  function(self) MPR_Options.CB_Black:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 0) end)
-    MPR_Options.CB_Black:SetScript("OnClick", function(self)
+    local window_style_posY = ml_posY-62
+    MPR_Options:NewFS("Window Style","FF9912",216,window_style_posY)
+    MPR_Options:NewFS("Border Color:","FFFFFF",219,window_style_posY-line1_offsetY-2)
+    -- GRAY (A9A9A9 / 169 169 169)
+    MPR_Options.CB_Gray = CreateFrame("CheckButton", "CB_Gray", MPR_Options, "UICheckButtonTemplate")
+    MPR_Options.CB_Gray:SetWidth(20)
+    MPR_Options.CB_Gray:SetHeight(20)
+    MPR_Options.CB_Gray:SetPoint("TOPLEFT", 307, window_style_posY-line1_offsetY)
+    _G["CB_GrayText"]:SetTextColor(169/255, 169/255, 169/255)
+    _G["CB_GrayText"]:SetText("Gray")
+    MPR_Options.CB_Gray:SetScript("OnShow",  function(self) MPR_Options.CB_Gray:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 0) end)
+    MPR_Options.CB_Gray:SetScript("OnClick", function(self)
         MPR_Options:UncheckColors()
-        MPR_Options.CB_Black:SetChecked(true)
-        MPR.Settings["BACKDROPBORDERCOLOR"] = {R = 0, G = 0, B = 0}
-        MPR.Colors["TITLE"] = "000000"
+        MPR_Options.CB_Gray:SetChecked(true)
+        MPR.Settings["BACKDROPBORDERCOLOR"] = {R = 169, G = 169, B = 169}
+        MPR.Colors["TITLE"] = "a9a9a9"
         MPR:UpdateBackdrop()
     end)
     -- WHITE (FFFFFF / 255 255 255)
     MPR_Options.CB_White = CreateFrame("CheckButton", "CB_White", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_White:SetWidth(20)
     MPR_Options.CB_White:SetHeight(20)
-    MPR_Options.CB_White:SetPoint("TOPLEFT", 350, -146)
+    MPR_Options.CB_White:SetPoint("RIGHT", "CB_Gray", 43, 0)
     _G["CB_WhiteText"]:SetTextColor(255/255, 255/255, 255/255)
     _G["CB_WhiteText"]:SetText("White")
     MPR_Options.CB_White:SetScript("OnShow",  function(self) MPR_Options.CB_White:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 255 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 255 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 255) end)
@@ -275,7 +295,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Blue = CreateFrame("CheckButton", "CB_Blue", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Blue:SetWidth(20)
     MPR_Options.CB_Blue:SetHeight(20)
-    MPR_Options.CB_Blue:SetPoint("TOPLEFT", 219, -159)
+    MPR_Options.CB_Blue:SetPoint("TOPLEFT", 219, window_style_posY-line2_offsetY)
     _G["CB_BlueText"]:SetTextColor(30/255, 144/255, 255/255)
     _G["CB_BlueText"]:SetText("Blue")
     MPR_Options.CB_Blue:SetScript("OnShow",  function(self) MPR_Options.CB_Blue:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 30 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 144 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 255) end)
@@ -290,7 +310,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Green = CreateFrame("CheckButton", "CB_Green", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Green:SetWidth(20)
     MPR_Options.CB_Green:SetHeight(20)
-    MPR_Options.CB_Green:SetPoint("TOPLEFT", 261, -159)
+    MPR_Options.CB_Green:SetPoint("RIGHT", "CB_Blue", 43, 0)
     _G["CB_GreenText"]:SetTextColor(0/255, 204/255, 51/255)
     _G["CB_GreenText"]:SetText("Green")
     MPR_Options.CB_Green:SetScript("OnShow",  function(self) MPR_Options.CB_Green:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 204 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 51) end)
@@ -305,7 +325,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Yellow = CreateFrame("CheckButton", "CB_Yellow", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Yellow:SetWidth(20)
     MPR_Options.CB_Yellow:SetHeight(20)
-    MPR_Options.CB_Yellow:SetPoint("TOPLEFT", 311, -159)
+    MPR_Options.CB_Yellow:SetPoint("RIGHT", "CB_Green", 50, 0)
     _G["CB_YellowText"]:SetTextColor(255/255, 204/255, 0/255)
     _G["CB_YellowText"]:SetText("Yellow")
     MPR_Options.CB_Yellow:SetScript("OnShow",  function(self) MPR_Options.CB_Yellow:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 255 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 204 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 0) end)
@@ -320,7 +340,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Red = CreateFrame("CheckButton", "CB_Red", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Red:SetWidth(20)
     MPR_Options.CB_Red:SetHeight(20)
-    MPR_Options.CB_Red:SetPoint("TOPLEFT", 363, -159)
+    MPR_Options.CB_Red:SetPoint("RIGHT", "CB_Yellow", 52, 0)
     _G["CB_RedText"]:SetTextColor(255/255, 0/255, 51/255)
     _G["CB_RedText"]:SetText("Red")
     MPR_Options.CB_Red:SetScript("OnShow",  function(self) MPR_Options.CB_Red:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 255 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 51) end)
@@ -335,7 +355,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_SeaGreen = CreateFrame("CheckButton", "CB_SeaGreen", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_SeaGreen:SetWidth(20)
     MPR_Options.CB_SeaGreen:SetHeight(20)
-    MPR_Options.CB_SeaGreen:SetPoint("TOPLEFT", 219, -173)
+    MPR_Options.CB_SeaGreen:SetPoint("TOPLEFT", 219, window_style_posY-line3_offsetY)
     _G["CB_SeaGreenText"]:SetTextColor(32/255, 178/255, 170/255)
     _G["CB_SeaGreenText"]:SetText("SeaGreen")
     MPR_Options.CB_SeaGreen:SetScript("OnShow",  function(self) MPR_Options.CB_SeaGreen:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 32 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 178 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 170) end)
@@ -350,7 +370,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Orange = CreateFrame("CheckButton", "CB_Orange", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Orange:SetWidth(20)
     MPR_Options.CB_Orange:SetHeight(20)
-    MPR_Options.CB_Orange:SetPoint("TOPLEFT", 286, -173)
+    MPR_Options.CB_Orange:SetPoint("RIGHT", "CB_SeaGreen", 67, 0)
     _G["CB_OrangeText"]:SetTextColor(255/255, 165/255, 0/255)
     _G["CB_OrangeText"]:SetText("Orange")
     MPR_Options.CB_Orange:SetScript("OnShow",  function(self) MPR_Options.CB_Orange:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 255 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 165 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 0) end)
@@ -365,7 +385,7 @@ function MPR_Options:Initialize()
     MPR_Options.CB_Purple = CreateFrame("CheckButton", "CB_Purple", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Purple:SetWidth(20)
     MPR_Options.CB_Purple:SetHeight(20)
-    MPR_Options.CB_Purple:SetPoint("TOPLEFT", 344, -173)
+    MPR_Options.CB_Purple:SetPoint("RIGHT", "CB_Orange", 58, 0)
     _G["CB_PurpleText"]:SetTextColor(128/255, 0/255, 128/255)
     _G["CB_PurpleText"]:SetText("Purple")
     MPR_Options.CB_Purple:SetScript("OnShow",  function(self) MPR_Options.CB_Purple:SetChecked(MPR.Settings["BACKDROPBORDERCOLOR"].R == 128 and MPR.Settings["BACKDROPBORDERCOLOR"].G == 0 and MPR.Settings["BACKDROPBORDERCOLOR"].B == 128) end)
@@ -378,45 +398,66 @@ function MPR_Options:Initialize()
     end)
 
     -- Opacity slider --
+    local opacity_posY = window_style_posY-77
     local OpacityValue = MPR.Settings["BACKDROPCOLOR"][4]*100
     MPR_OpacitySlider = CreateFrame("Slider", "MPR_OpacitySlider", MPR_Options, "OptionsSliderTemplate")
     MPR_OpacitySlider:SetWidth(160)
     MPR_OpacitySlider:SetHeight(20)
-    MPR_OpacitySlider:SetPoint('TOPLEFT', 222, -208)
+    MPR_OpacitySlider:SetPoint('TOPLEFT', 222, opacity_posY)
     MPR_OpacitySlider:SetOrientation('HORIZONTAL')
-
     MPR_OpacitySlider:SetMinMaxValues(0, 100)
     MPR_OpacitySlider:SetValueStep(1)
-
     MPR_OpacitySlider:SetValue(OpacityValue)
-
     _G[MPR_OpacitySlider:GetName().."Low"]:SetText("0%")
     _G[MPR_OpacitySlider:GetName().."High"]:SetText("100%")
     _G[MPR_OpacitySlider:GetName().."Text"]:SetText("|cFFffffffOpacity: "..OpacityValue.."%|r |cFFbebebe(Default: 70%)|r")
-
     MPR_OpacitySlider:SetScript("OnValueChanged",function()
         _G[MPR_OpacitySlider:GetName()..'Text']:SetText("|cFFffffffOpacity: "..MPR_OpacitySlider:GetValue().."%|r |cFFbebebe(Default: 70%)|r")
         MPR.Settings["BACKDROPCOLOR"][4] = MPR_OpacitySlider:GetValue()/100
         MPR:UpdateBackdrop()
     end)
 
-    -- Killing blow
-    MPR_Options:NewFS("Killing blow","990099",216,-238)
-    MPR_Options:NewCB("Enable","FFFFFF","KILLINGBLOW",288,-236)
-    MPR_Options:NewFS("Announces killing blow/finishing damage","FFFFFF",218,-252,9)
-    MPR_Options:NewFS("on boss in |cFFEE7600raid|r channel.","FFFFFF",218,-262,9)
-    MPR_Options:NewFS("Display:","FFFFFF",218,-274,11)
-    MPR_Options:NewCB("Ability",nil,"KILLINGBLOW_ABILITY",268,-270)
-    MPR_Options:NewCB("Amount",nil,"KILLINGBLOW_AMOUNT",216,-284)
-    MPR_Options:NewCB("Overkill",nil,"KILLINGBLOW_OVERKILL",289,-284)
-    MPR_Options:NewCB("Critical",nil,"KILLINGBLOW_CRITICAL",349,-284)
+    -- Killing Blow
+    local kb_posY = opacity_posY-33
+    MPR_Options:NewFS("Killing Blow","990099",216,kb_posY)
+    MPR_Options:NewCB("Enable","FFFFFF","KILLINGBLOW",298,kb_posY+2)
+    MPR_Options:NewFS("Announces killing blow/finishing damage","FFFFFF",218,kb_posY-line1_offsetY,9)
+    MPR_Options:NewFS("on boss in |cFFEE7600raid|r channel.","FFFFFF",218,kb_posY-line1_offsetY-8,9)
+    MPR_Options:NewFS("Display:","FFFFFF",218,kb_posY-line2_offsetY-4,11)
+    MPR_Options:NewCB("Ability",nil,"KILLINGBLOW_ABILITY",268,kb_posY-line2_offsetY-2)
+    MPR_Options:NewCB("Amount",nil,"KILLINGBLOW_AMOUNT",216,kb_posY-line3_offsetY-2)
+    MPR_Options:NewCB("Overkill",nil,"KILLINGBLOW_OVERKILL",283,kb_posY-line3_offsetY-2)
+    MPR_Options:NewCB("Critical",nil,"KILLINGBLOW_CRITICAL",349,kb_posY-line3_offsetY-2)
     local Button = CreateFrame("button","BtnTestKillingBlow", MPR_Options, "UIPanelButtonTemplate")
     Button:SetHeight(18)
     Button:SetWidth(60)
-    Button:SetPoint("TOPLEFT", 332, -266)
+    Button:SetPoint("TOPLEFT", 340, kb_posY-line2_offsetY)
     Button:SetText("Test")
     Button:SetScript("OnClick", function(self)
         MPR:SelfReport(MPR:FormatKillingBlow("Herbalist","Squirrel",GetSpellLink(49238),8,21350,true))
+    end)
+
+    --Report Prefix Text
+    local prefix_posY = kb_posY-62
+    local prefix_value = MPR.Settings["PREFIX_VALUE"]
+    MPR_Options:NewFS("Report Prefix", "1E90FF", 216, prefix_posY)
+    MPR_Options:NewFS("(max. 10 letters)","FFFFFF",300,prefix_posY-3,9)
+    MPR_Options.EB_PREFIX = CreateFrame("EditBox", "EditBox", MPR_Options, "InputBoxTemplate")
+    MPR_Options.EB_PREFIX:SetText(prefix_value)
+    MPR_Options.EB_PREFIX:SetPoint("TOPLEFT", 223, prefix_posY-16)
+    MPR_Options.EB_PREFIX:SetAutoFocus(false)
+    MPR_Options.EB_PREFIX:SetHeight(18)
+    MPR_Options.EB_PREFIX:SetWidth(60)
+    MPR_Options.EB_PREFIX:SetMaxLetters(10)
+    MPR_Options.BTN_SAVE_PREFIX = CreateFrame("button","BtnSavePrefix", MPR_Options, "UIPanelButtonTemplate")
+    MPR_Options.BTN_SAVE_PREFIX:SetHeight(18)
+    MPR_Options.BTN_SAVE_PREFIX:SetWidth(60)
+    MPR_Options.BTN_SAVE_PREFIX:SetPoint("TOPLEFT", 286, prefix_posY-17)
+    MPR_Options.BTN_SAVE_PREFIX:SetText("Save")
+    MPR_Options.BTN_SAVE_PREFIX:SetScript("OnClick", function(self)
+        MPR.Settings["PREFIX_VALUE"] = MPR_Options.EB_PREFIX:GetText()
+        MPR:SelfReport("Chat Prefix changed to " .. MPR_Options.EB_PREFIX:GetText())
+        MPR_Options.EB_PREFIX:ClearFocus()
     end)
 end
 
@@ -438,7 +479,7 @@ function MPR_Options:ID_HandleOnClick(num)
 end
 
 function MPR_Options:UncheckColors()
-    MPR_Options.CB_Black:SetChecked(false)
+    MPR_Options.CB_Gray:SetChecked(false)
     MPR_Options.CB_White:SetChecked(false)
     MPR_Options.CB_Blue:SetChecked(false)
     MPR_Options.CB_Green:SetChecked(false)

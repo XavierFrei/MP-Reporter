@@ -1,6 +1,6 @@
 MPR = CreateFrame("frame","MPRFrame")
-MPR.Version = "v2.91"
-MPR.VersionNotes = {"Added tracking for more spells and soulstone"}
+MPR.Version = "v2.92"
+MPR.VersionNotes = {"Added parry haste option, chat prefix option and vars for element positioning"}
 local ClassColors = {["DEATHKNIGHT"] = "C41F3B", ["DEATH KNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA",
     ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
 local InstanceShortNames = {["Icecrown Citadel"] = "ICC", ["Vault of Archavon"] = "VOA", ["Trial of the Crusader"] = "TOC", ["Naxxramas"] = "NAXX", ["The Ruby Sanctum"] = "RS"}
@@ -253,12 +253,15 @@ local npcsBossSpellSumon = {"Vengeful Shade"} -- Boss summons, destination is un
 
 -- Casts (SPELL_CAST_START and SPELL_CAST_SUCCESS) --
 --| Output: Unit casts [Spell]. |--
-local spellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex", "Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Ritual of Souls"}
--- "Bloodlust", "Heroism"
+local spellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex", "Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Ritual of Souls", "Heroism", "Bloodlust"}
+local spellsCastByID = {698, 69381}
+-- [698]   = Ritual of Summoning
+-- [69381] = Drums: Gift of the Wilds
 --| Output: Unit casts [Spell] on Target. |--
-local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Rebirth", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
+local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Rebirth", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
 --| Output: [Spell] on Target. |--
 local spellsBossCastOnTarget = {"Rune of Blood", "Vile Gas", "Swarming Shadows", "Necrotic Plague", "Soul Reaper"} -- If sourceName isn't important (ex. Boss casting).
+
 
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
 --| Output: [Spell] applied on Target. |--
@@ -1019,8 +1022,13 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
             self:RaidReport(self:FormatKillingBlow(sourceName,destName,"a melee attack",amount,overkill,critical))
         end
     elseif event == "SWING_MISSED" then
-        local spellName = ACTION_SWING
+        -- local spellName = ACTION_SWING
         local missType = select(9, ...)
+        if missType == "PARRY" and destGUID == UnitGUID("target") and (destName == "Sindragosa" or destName == "Halion") then
+            if self.Settings["REPORT_PARRYHASTE"] then
+                self:ReportParryHaste(sourceName,destName)
+            end
+        end
     elseif event == "SWING_LEECH" then
         local amount, powerType, extraAmount = select(12, ...)
         local valueType = 2
@@ -1050,10 +1058,6 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
         elseif event == "SPELL_CAST_START" or event == "SPELL_CAST_SUCCESS" then
-            --[[if spellName == "Misdirection" and (UnitInRaid(sourceName) or UnitInParty(sourceName)) then
-                self:ReportCastOnTarget(sourceName, destName, spellId)
-            end]]
-
             -- 1: Lord Marrowgar timers
             if sourceName == "Lord Marrowgar" then
                 if spellName == "Bone Spike Graveyard" then
@@ -1165,15 +1169,22 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
 
-            if (spellName == "Heroism" or spellName == "Bloodlust") and UnitInRaid(sourceName) then
-                table.wipe(targetsHeroism)
-                casterHeroism = sourceName
-                self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
-            elseif contains(spellsCast,spellName) or spellId == 69381 then -- 69381 - [Gift of the Wild] Drums!
-                self:ReportCast(sourceName,spellId)
-            elseif contains(spellsCastOnTarget,spellName) then
-                self:ReportCastOnTarget(sourceName,destName,spellId)
-            elseif contains(spellsBossCastOnTarget,spellName) then
+            if UnitInRaid(sourceName) then
+                if (spellName == "Heroism" or spellName == "Bloodlust") then
+                    table.wipe(targetsHeroism)
+                    casterHeroism = sourceName
+                    self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
+                elseif contains(spellsCast,spellName) then
+                    self:ReportCast(sourceName,spellId)
+                elseif contains(spellsCastByID,spellId) then
+                    self:ReportCast(sourceName,spellId)
+                elseif contains(spellsCastOnTarget,spellName) then
+                    if UnitIsPlayer(sourceName) then
+                        self:ReportCastOnTarget(sourceName,destName,spellId)
+                    end
+                end
+            end
+            if contains(spellsBossCastOnTarget,spellName) then
                 self:ReportBossCastOnTarget(spellId,destName)
             end
 
@@ -1467,6 +1478,11 @@ function MPR:ReportDispel(UNIT,TARGET,SPELL) -- Unit dispels [Spell] from Target
     self:HandleReport(string.format("%s dispels %s (%s)",UNIT,TARGET,spell(SPELL,true)), string.format("%s dispels %s (%s)",unit(UNIT),unit(TARGET),spell(SPELL)))
 end
 
+--[[ PARRY_HASTE ]]--
+function MPR:ReportParryHaste(UNIT,TARGET) -- Unit has caused a PARRY by Target.
+    self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET))
+end
+
 --[[ SPELL_CREATE ]]--
 function MPR:ReportSpellCreate(UNIT,SPELL) -- Unit prepares [Spell].
     self:HandleReport(string.format("%s prepares %s",UNIT,spell(SPELL,true)), string.format("%s prepares %s",unit(UNIT),spell(SPELL)))
@@ -1507,9 +1523,10 @@ function MPR:SelfReport(msg, short)
     DEFAULT_CHAT_FRAME:AddMessage("|cFF"..self.Colors["TITLE"].."|HMPR:Options:Show:nil|h["..(short and "MPR" or "MP Reporter").."]|h:|r "..msg, tonumber(self.Colors["TEXT"]:sub(1,2),16)/255, tonumber(self.Colors["TEXT"]:sub(3,4),16)/255, tonumber(self.Colors["TEXT"]:sub(5,6),16)/255)
 end
 
-local prefixText = "<MPR> "
+
 -- Just adds MPR channel prefix
 function MPR:RaidReport(msg, ...)
+    local prefixText = MPR.Settings["PREFIX_VALUE"] .. " "
     local rrBypass, prefixBypass = ...
     if not (msg and (self.Settings["RAID"] or rrBypass)) then return end
     if not prefixBypass then
@@ -1520,6 +1537,7 @@ function MPR:RaidReport(msg, ...)
 end
 
 function MPR:PartyReport(msg, ...)
+    local prefixText = MPR.Settings["PREFIX_VALUE"] .. " "
     local prBypass, prefixBypass = ...
     if not (msg and (self.Settings["RAID"] or prBypass)) then return end
     if not prefixBypass then
@@ -1538,6 +1556,7 @@ end
 
 -- Guild Message
 function MPR:Guild(MESSAGE, ...)
+    local prefixText = MPR.Settings["PREFIX_VALUE"] .. " "
     if not (MESSAGE) then return end
     local noPrefix = ...
     SendChatMessage((noPrefix and "" or prefixText)..MESSAGE, "GUILD")
@@ -1545,6 +1564,7 @@ end
 
 -- Whisper Message
 function MPR:Whisper(TARGET, MESSAGE, ...)
+    local prefixText = MPR.Settings["PREFIX_VALUE"] .. " "
     local wBypass = ...
     if not (MESSAGE and (self.Settings["WHISPER"] or wBypass)) then return end
     if UnitName("player") ~= TARGET then
@@ -1690,12 +1710,14 @@ function MPR:ADDON_LOADED(addon)
     self:DefineSetting("REPORTIN_OUTSIDE", false)
     self:DefineSetting("REPORT_DISPELS", false)
     self:DefineSetting("REPORT_MASSDISPELS", false)
+    self:DefineSetting("REPORT_PARRYHASTE", false)
     self:DefineSetting("PD_REPORT", true)
     self:DefineSetting("PD_SELF", true)
     self:DefineSetting("PD_RAID", false)
     self:DefineSetting("PD_GUILD", false)
     self:DefineSetting("PD_WHISPER", false)
     self:DefineSetting("PD_LOG", true)
+    self:DefineSetting("PREFIX_VALUE", "<MPR>")
     self:DefineSetting("T_SELF", true)
     self:DefineSetting("T_RAID", true)
     self:DefineSetting("TIMER_ANNOUNCES", MPR_Timers.DefaultTimerAnnounces)
