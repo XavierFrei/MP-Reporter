@@ -1,6 +1,6 @@
 MPR = CreateFrame("frame","MPRFrame")
-MPR.Version = "v2.92"
-MPR.VersionNotes = {"Added parry haste option, chat prefix option and vars for element positioning"}
+MPR.Version = "v2.93"
+MPR.VersionNotes = {"Added Mana Tide Totem, GTS and list to ignore dispels"}
 local ClassColors = {["DEATHKNIGHT"] = "C41F3B", ["DEATH KNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA",
     ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
 local InstanceShortNames = {["Icecrown Citadel"] = "ICC", ["Vault of Archavon"] = "VOA", ["Trial of the Crusader"] = "TOC", ["Naxxramas"] = "NAXX", ["The Ruby Sanctum"] = "RS"}
@@ -247,26 +247,26 @@ local reportDamageOnTarget = {}
 
 -- Summons (SPELL_SUMMON) --
 --| Output: Unit summons Target. [Spell] |--
-local npcsSpellSumon = {"Slime Pool"}
+local npcSpellSummon = {"Slime Pool"}
 --| Output: Target summoned. [Spell] |--
-local npcsBossSpellSumon = {"Vengeful Shade"} -- Boss summons, destination is unknown. ("Dark Nucleus" summoned every second - spam)
+local npcBossSpellSummon = {"Vengeful Shade"} -- Boss summons, destination is unknown. ("Dark Nucleus" summoned every second - spam)
 
 -- Casts (SPELL_CAST_START and SPELL_CAST_SUCCESS) --
 --| Output: Unit casts [Spell]. |--
-local spellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex", "Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Ritual of Souls", "Heroism", "Bloodlust"}
-local spellsCastByID = {698, 69381}
+local spellsCast = {"Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Ritual of Souls", "Mana Tide Totem", 698, 69381}
 -- [698]   = Ritual of Summoning
 -- [69381] = Drums: Gift of the Wilds
+local npcSpellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex"}
 --| Output: Unit casts [Spell] on Target. |--
-local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Rebirth", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
+local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
 --| Output: [Spell] on Target. |--
 local spellsBossCastOnTarget = {"Rune of Blood", "Vile Gas", "Swarming Shadows", "Necrotic Plague", "Soul Reaper"} -- If sourceName isn't important (ex. Boss casting).
 
-
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
+local aurasApplied = {"Eyes of Twilight"}
 --| Output: [Spell] applied on Target. |--
 --| Filter: UnitIsPlayer(Target)
-local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion"}
+local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion", "Soulstone Resurrection"}
 --| Output: [Spell] applied on Target1, Target2, Target3 ... |--
 local aurasAppliedOnTargets = {"Impaled", "Gas Spore", "Vile Gas", "Frost Beacon"}
 -- MPR.DB.SayYells = true
@@ -281,13 +281,12 @@ local sayAuraOnMe = {
 }
 --| Output: Target has Amount stacks of [Spell]. |--
 local stackAppliedOnTarget = {"Instability", "Cleave Armor"}
---| Output: Unit cast [Soulstone Ressurection] on target. |--
-local soulstoneAppliedOnTarget = {"Soulstone Resurrection"}
 --| Output: Player steals [Spell] from Target. |--
 -- MPR.DB.ReportAurasStolen = true
 
 -- Dispeling --
 --| Output: Player dispels Target. [extraSpell] |--
+local ignoreDispels = {"Frost Fever", "Blood Plague", "Ebon Plague", "Corrupted Blood", "Leeching Rot", "Amplify Magic", "Curse of Agony", "Fireball", "Shield Bash", "Rejuvenation", "Frostfire Bolt", "Frost Breath"}
 -- MPR.DB.ReportDispels = true
 --| Output: Player mass-dispels Target1 ([extraSpell1]), Target2 ([extraSpell2]), Target3 ([extraSpell3]) ... |--
 -- MPR.DB.ReportMassDispels = true
@@ -485,6 +484,14 @@ function spell(id, ...)
         return string.format("\124T%s:12:12:0:0:64:64:5:59:5:59\124t|r%s|cFF%s",select(3, GetSpellInfo(id)),GetSpellLink(id),MPR.Colors["TEXT"])
     else
         return string.format("|r%s|cFF%s",GetSpellLink(id),MPR.Colors["TEXT"])
+    end
+end
+
+function item(id)
+    if type(id) ~= "number" then return id end
+    local itemLink = select(2, GetItemInfo(id))
+    if itemLink then
+        return itemLink
     end
 end
 
@@ -948,7 +955,6 @@ function MPR:InsertDeath(Player,Source,Ability,Amount,Overkill)
     table.insert(self.DataDeaths[#self.DataDeaths].Deaths,tbl)
 end
 
-
 local PotencialDeaths = {}
 function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
     --if not self.Settings["SELF"] then return end
@@ -1169,23 +1175,21 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
 
-            if UnitInRaid(sourceName) then
+            if UnitInRaid(sourceName) or UnitInParty(sourceName) then
                 if (spellName == "Heroism" or spellName == "Bloodlust") then
                     table.wipe(targetsHeroism)
                     casterHeroism = sourceName
-                    self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
-                elseif contains(spellsCast,spellName) then
                     self:ReportCast(sourceName,spellId)
-                elseif contains(spellsCastByID,spellId) then
+                    self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
+                elseif contains(spellsCast,spellName) or contains(spellsCast,spellId) then
                     self:ReportCast(sourceName,spellId)
                 elseif contains(spellsCastOnTarget,spellName) then
-                    if UnitIsPlayer(sourceName) then
-                        self:ReportCastOnTarget(sourceName,destName,spellId)
-                    end
+                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                 end
-            end
-            if contains(spellsBossCastOnTarget,spellName) then
+            elseif contains(spellsBossCastOnTarget,spellName) then
                 self:ReportBossCastOnTarget(spellId,destName)
+            elseif contains(npcSpellsCast,spellName) then
+                self:ReportCast(sourceName,spellId)
             end
 
             if spellName == "Necrotic Plague" then
@@ -1210,9 +1214,9 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 MPR_Timers:SummonVengefulShade()
             end
 
-            if contains(npcsSpellSumon,destName) then
+            if contains(npcSpellSummon,destName) then
                 self:ReportSummon(sourceName,destName,spellId)
-            elseif contains(npcsBossSpellSumon,destName) then
+            elseif contains(npcBossSpellSummon,destName) then
                 self:ReportBossSummon(destName,spellId)
             end
         elseif event == "SPELL_DAMAGE" then
@@ -1285,9 +1289,12 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
             if extraSpellName == "Necrotic Plague" and sourceName ~= destName then
                 --self:Whisper(destName, GetSpellLink(extraSpellId).." dispeled from you!")
             end
-
-            if self.Settings["REPORT_DISPELS"] and (spellName ~= "Mass Dispel" or self.Settings["REPORT_MASSDISPELS"]) then
-                self:ReportDispel(sourceName,destName,extraSpellId)
+            if UnitInRaid(sourceName) or UnitInParty(sourceName) then
+                if self.Settings["REPORT_DISPELS"] and (spellName ~= "Mass Dispel" or self.Settings["REPORT_MASSDISPELS"]) then
+                    if not contains(ignoreDispels,extraSpellName) then
+                        self:ReportDispel(sourceName,destName,extraSpellId)
+                    end
+                end
             end
         elseif event == "SPELL_AURA_APPLIED" then
             local auraType = select(12, ...)
@@ -1312,8 +1319,8 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 self:Whisper(destName, GetSpellLink(70126).." on you! Run away from others!!")
             elseif spellName == "Gaseous Bloat" and UnitIsPlayer(destName) then
                 self:Whisper(destName, GetSpellLink(spellId).." on you! Kite it!!")
-            elseif spellId == 33786 then
-                self:ReportCastOnTarget(sourceName,destName,spellId)
+            elseif spellId == 33786 then -- Cyclone
+                self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
             end
 
             if sourceName == "Sindragosa" and spellName == "Instability" and UnitInRaid(destName) then
@@ -1328,7 +1335,19 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
 
-            if contains(aurasAppliedOnTarget,spellName) and UnitIsPlayer(destName) then
+            if contains(aurasApplied,spellName) then
+                if spellId == 75490 then -- [Eyes of Twilight]
+                    local itemID = 54573 -- [Glowing Twilight Scale] (271)
+                    self:ReportItemUsed(sourceName,itemID)
+                elseif spellId == 75495 then -- [Eyes of Twilight]
+                    local itemID = 54589 -- [Glowing Twilight Scale] (284)
+                    self:ReportItemUsed(sourceName,itemID)
+                else
+                    self:ReportCast(sourceName,spellId)
+                end
+            elseif contains(aurasAppliedOnTarget,spellName) and UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
+                self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+            elseif contains(aurasAppliedOnTarget,spellName) and not UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
                 if destName == UnitName("player") and contains(sayAuraOnMe,spellName) then
                     self:Say(sayAuraOnMe[spellName])
                 end
@@ -1340,9 +1359,7 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 table.insert(targetsAura,destName)
                 self:CancelTimer("Aura Targets")
                 self:ScheduleTimer("Aura Targets", TimerHandler, 0.5, spellId)
-            elseif contains(soulstoneAppliedOnTarget,spellName) then
-                self:ReportCastOnTarget(sourceName,destName,spellId)
-            elseif spellName == "Heroism" and sourceName == casterHeroism and UnitIsPlayer(destName) then
+            elseif (spellName == "Heroism" or spellName == "Bloodlust") and sourceName == casterHeroism and UnitIsPlayer(destName) then
                 table.insert(targetsHeroism,destName)
                 -- 20: Saviana Ragefire timers
             elseif spellName == "Enrage" and destName == "Saviana Ragefire" then
@@ -1455,7 +1472,7 @@ end
 function MPR:ReportCast(UNIT,SPELL) -- Unit casts [Spell].
     self:HandleReport(string.format("%s casts %s",UNIT,spell(SPELL,true)), string.format("%s casts %s",unit(UNIT),spell(SPELL)))
 end
-function MPR:ReportCastOnTarget(UNIT,TARGET,SPELL) -- Unit casts [Spell] on Target.
+function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL) -- Unit casts [Spell] on Target.
     self:HandleReport(string.format("%s casts %s on %s",UNIT,spell(SPELL,true),TARGET), string.format("%s casts %s on %s",unit(UNIT),spell(SPELL),unit(TARGET)))
 end
 
@@ -1463,9 +1480,11 @@ end
 function MPR:ReportBossCastOnTarget(SPELL,TARGET) -- [Spell] on Target.
     self:HandleReport(string.format("%s on %s",spell(SPELL,true),TARGET), string.format("%s on %s",spell(SPELL),unit(TARGET)))
 end
-
 function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target.
     self:HandleReport(string.format("%s applied on %s",spell(SPELL,true),TARGET), string.format("%s applied on %s",spell(SPELL),unit(TARGET)))
+end
+function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item].
+    self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)))
 end
 
 --[[ SPELL_AURA_APPLIED_DOSE ]]--

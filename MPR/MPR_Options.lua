@@ -61,9 +61,9 @@ function MPR_Options:Initialize()
     MPR_Options:NewFS("Reporting","20B2AA",16,reporting_posY)
     local repLine1_posY = reporting_posY-line1_offsetY
     local repLine2_posY = reporting_posY-line2_offsetY
-    MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)             -- [ ] Dispels
-    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)    -- [ ] Mass Dispels
-    MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)      -- [ ] Parry Haste
+    MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)                              -- [ ] Dispels
+    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)                     -- [ ] Mass Dispels
+    MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)     -- [ ] Parry Haste
 
     -- Reporting in
     local reporting_in_posY = reporting_posY-50
@@ -134,7 +134,7 @@ function MPR_Options:Initialize()
     -- Player Deaths
     local player_deaths_posY = timers_posY-20
     MPR_Options:NewFS("Player Deaths","22FF00",16,player_deaths_posY)
-    MPR_Options:NewCB("Enable",  "FFFFFF",    "PD_REPORT",104,player_deaths_posY+2)  -- [ ] Enable
+    MPR_Options:NewCB("Enable",  "FFFFFF",    "PD_REPORT",104,player_deaths_posY+2)        -- [ ] Enable
     local player_deaths_line1_posY = player_deaths_posY-line1_offsetY
     MPR_Options:NewCB("Self",    "1E90FF",    "PD_SELF",16,player_deaths_line1_posY)       -- [ ] Self
     MPR_Options:NewCB("Raid",    "EE7600",    "PD_RAID",56,player_deaths_line1_posY)       -- [ ] Raid
@@ -144,7 +144,7 @@ function MPR_Options:Initialize()
     -- Report Deaths
     local report_deaths_posY = player_deaths_posY-36
     MPR_Options:NewFS("Report Deaths","FFAA00",16,report_deaths_posY)
-    MPR_Options:NewCB("Enable logging","FFFFFF","PD_LOG",108,report_deaths_posY+2)     -- [ ] Enable logging
+    MPR_Options:NewCB("Enable logging","FFFFFF","PD_LOG",108,report_deaths_posY+2)         -- [ ] Enable logging
 
     -- SELF
     local report_deaths_btn_posY = report_deaths_posY-line1_offsetY
@@ -254,8 +254,8 @@ function MPR_Options:Initialize()
     local ml_posY = general_posY-48
     MPR_Options:NewFS("Masterloot","3CB371",216,ml_posY)
     MPR_Options:NewCB("Report |cFFB048F8epic|r items in loot",nil,"REPORT_LOOT", 214, ml_posY-line1_offsetY)    -- [ ] ReportLoot
-    MPR_Options:NewCB("Only when BoP in loot",nil,"nil", 234, ml_posY-line2_offsetY)   -- [ ] ReportOnlyWhenBOP    REPORT_LOOT_BOP_ONLY
-    MPR_Options:NewCB("Add BiS information",nil,"REPORT_LOOT_BIS_INFO", 234, ml_posY-line3_offsetY)   -- [ ] AddClassBISinfo
+    MPR_Options:NewCB("Only when BoP in loot",nil,"nil", 234, ml_posY-line2_offsetY)                            -- [ ] ReportOnlyWhenBOP    REPORT_LOOT_BOP_ONLY
+    MPR_Options:NewCB("Add BiS information",nil,"REPORT_LOOT_BIS_INFO", 234, ml_posY-line3_offsetY)             -- [ ] AddClassBISinfo
 
     -- Window Style
     local window_style_posY = ml_posY-62
@@ -441,7 +441,7 @@ function MPR_Options:Initialize()
     local prefix_posY = kb_posY-62
     local prefix_value = MPR.Settings["PREFIX_VALUE"]
     MPR_Options:NewFS("Report Prefix", "1E90FF", 216, prefix_posY)
-    MPR_Options:NewFS("(max. 10 letters)","FFFFFF",300,prefix_posY-3,9)
+    MPR_Options:NewFS("(max. 10 characters)","FFFFFF",300,prefix_posY-3,9)
     MPR_Options.EB_PREFIX = CreateFrame("EditBox", "EditBox", MPR_Options, "InputBoxTemplate")
     MPR_Options.EB_PREFIX:SetText(prefix_value)
     MPR_Options.EB_PREFIX:SetPoint("TOPLEFT", 223, prefix_posY-16)
