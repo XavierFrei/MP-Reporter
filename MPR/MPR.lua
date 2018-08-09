@@ -1,6 +1,6 @@
 MPR = CreateFrame("frame","MPRFrame")
-MPR.Version = "v2.93"
-MPR.VersionNotes = {"Added Mana Tide Totem, GTS and list to ignore dispels"}
+MPR.Version = "v2.94"
+MPR.VersionNotes = {"Added: Ardent Defender & Sindragosa Trinket", "Added: Customizable Ignore Dispel List", "Changed: Aura Mastery now shows respective Aura which it was used with", "Fixed: Removed Parry Haste in Halion Twilight Phase"}
 local ClassColors = {["DEATHKNIGHT"] = "C41F3B", ["DEATH KNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA",
     ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
 local InstanceShortNames = {["Icecrown Citadel"] = "ICC", ["Vault of Archavon"] = "VOA", ["Trial of the Crusader"] = "TOC", ["Naxxramas"] = "NAXX", ["The Ruby Sanctum"] = "RS"}
@@ -263,7 +263,7 @@ local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", 
 local spellsBossCastOnTarget = {"Rune of Blood", "Vile Gas", "Swarming Shadows", "Necrotic Plague", "Soul Reaper"} -- If sourceName isn't important (ex. Boss casting).
 
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
-local aurasApplied = {"Eyes of Twilight"}
+local aurasApplied = {"Eyes of Twilight", "Aegis of Dalaran", "Ardent Defender"}
 --| Output: [Spell] applied on Target. |--
 --| Filter: UnitIsPlayer(Target)
 local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion", "Soulstone Resurrection"}
@@ -279,6 +279,15 @@ local sayAuraOnMe = {
     ["Frenzied Bloodthirst"] = "I have to bite!!",
     ["Frost Beacon"] = "Frost Beacon on me!",
 }
+local paladinAuras = {
+    ["Devotion Aura"] = true,
+    ["Retribution Aura"] = true,
+    ["Concentration Aura"] = true,
+    ["Shadow Resistance Aura"] = true,
+    ["Frost Resistance Aura"] = true,
+    ["Fire Resistance"] = true,
+    ["Crusader Aura"] = true,
+}
 --| Output: Target has Amount stacks of [Spell]. |--
 local stackAppliedOnTarget = {"Instability", "Cleave Armor"}
 --| Output: Player steals [Spell] from Target. |--
@@ -286,7 +295,7 @@ local stackAppliedOnTarget = {"Instability", "Cleave Armor"}
 
 -- Dispeling --
 --| Output: Player dispels Target. [extraSpell] |--
-local ignoreDispels = {"Frost Fever", "Blood Plague", "Ebon Plague", "Corrupted Blood", "Leeching Rot", "Amplify Magic", "Curse of Agony", "Fireball", "Shield Bash", "Rejuvenation", "Frostfire Bolt", "Frost Breath"}
+local ignoreDispels = {"Frost Fever", "Blood Plague", "Ebon Plague", "Corrupted Blood", "Leeching Rot", "Amplify Magic", "Curse of Agony", "Fireball", "Shield Bash", "Rejuvenation", "Frostfire Bolt", "Frost Breath", "Curse of Doom"}
 -- MPR.DB.ReportDispels = true
 --| Output: Player mass-dispels Target1 ([extraSpell1]), Target2 ([extraSpell2]), Target3 ([extraSpell3]) ... |--
 -- MPR.DB.ReportMassDispels = true
@@ -344,6 +353,8 @@ do
             else -- arg2 is ICC, TOC or RS
                 MPR_AuraInfo:UpdateFrame(tonumber(arg3))
             end
+        elseif arg1 == "IgnoreDispels" then
+            MPR_Dispels:Toggle()
         elseif arg1 == "Timers" then
             MPR_Timers:Toggle()
         elseif arg1 == "ClearDeathLog" then
@@ -663,6 +674,8 @@ function SlashCmdList.MPR(msg, editbox)
     msg = strlower(msg)
     if type(tonumber(msg)) == "number" then
         MPR_AuraInfo:UpdateFrame(tonumber(msg))
+    elseif msg == "d" or msg == "dispels" then
+        MPR_Dispels:Toggle()
     elseif msg == "t" or msg == "timers" then
         MPR_Timers:Toggle()
     elseif msg == "to" then
@@ -1030,7 +1043,8 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
     elseif event == "SWING_MISSED" then
         -- local spellName = ACTION_SWING
         local missType = select(9, ...)
-        if missType == "PARRY" and destGUID == UnitGUID("target") and (destName == "Sindragosa" or destName == "Halion") then
+        -- 39863 = UnitId of Halion in Normal Phase
+        if missType == "PARRY" and destGUID == UnitGUID("target") and (destName == "Sindragosa" or tonumber((destGUID):sub(9,12),16)) == 39863 then
             if self.Settings["REPORT_PARRYHASTE"] then
                 self:ReportParryHaste(sourceName,destName)
             end
@@ -1182,7 +1196,20 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                     self:ReportCast(sourceName,spellId)
                     self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
                 elseif contains(spellsCast,spellName) or contains(spellsCast,spellId) then
-                    self:ReportCast(sourceName,spellId)
+                    if(spellName == "Aura Mastery") then
+                        for aura in pairs(paladinAuras) do
+                            for i=1,GetNumGroupMembers() do
+                                if UnitBuff("raid"..i, aura) then
+                                    local caster = select(8, UnitBuff("raid"..i, aura))
+                                    if UnitName(caster) == UnitName("raid"..i) and UnitName(caster) == sourceName then
+                                        self:ReportAuraMasteryCast(sourceName,spellId,aura)
+                                    end
+                                end
+                            end
+                        end
+                    else
+                        self:ReportCast(sourceName,spellId)
+                    end
                 elseif contains(spellsCastOnTarget,spellName) then
                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                 end
@@ -1342,8 +1369,14 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 elseif spellId == 75495 then -- [Eyes of Twilight]
                     local itemID = 54589 -- [Glowing Twilight Scale] (284)
                     self:ReportItemUsed(sourceName,itemID)
+                elseif spellId == 71635 then -- [Aegis of Dalaran]
+                    local itemID = 50361 -- [Sindragosa's Flawless Fang] (264)
+                    self:ReportItemUsed(sourceName,itemID)
+                elseif spellId == 71638 then -- [Aegis of Dalaran]
+                    local itemID = 50364 -- [Sindragosa's Flawless Fang] (277)
+                    self:ReportItemUsed(sourceName,itemID)
                 else
-                    self:ReportCast(sourceName,spellId)
+                    self:ReportApplied(sourceName,spellId)
                 end
             elseif contains(aurasAppliedOnTarget,spellName) and UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
                 self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
@@ -1475,6 +1508,9 @@ end
 function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL) -- Unit casts [Spell] on Target.
     self:HandleReport(string.format("%s casts %s on %s",UNIT,spell(SPELL,true),TARGET), string.format("%s casts %s on %s",unit(UNIT),spell(SPELL),unit(TARGET)))
 end
+function MPR:ReportAuraMasteryCast(UNIT,SPELL,AURA) -- Unit casts [Spell] (Aura).
+    self:HandleReport(string.format("%s casts %s (%s)",UNIT,spell(SPELL,true),spell(AURA)), string.format("%s casts %s (%s)",unit(UNIT),spell(SPELL),spell(AURA)))
+end
 
 --[[ SPELL_AURA_APPLIED ]]--
 function MPR:ReportBossCastOnTarget(SPELL,TARGET) -- [Spell] on Target.
@@ -1485,6 +1521,9 @@ function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target.
 end
 function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item].
     self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)))
+end
+function MPR:ReportApplied(UNIT,SPELL) -- [Spell] applied on Unit.
+    self:HandleReport(string.format("%s procced on %s",spell(SPELL,true),UNIT), string.format("%s procced on %s",spell(SPELL),unit(UNIT)))
 end
 
 --[[ SPELL_AURA_APPLIED_DOSE ]]--
@@ -1499,7 +1538,7 @@ end
 
 --[[ PARRY_HASTE ]]--
 function MPR:ReportParryHaste(UNIT,TARGET) -- Unit has caused a PARRY by Target.
-    self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET))
+    self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET), string.format("%s has caused a PARRY by %s",UNIT,TARGET))
 end
 
 --[[ SPELL_CREATE ]]--
@@ -1647,6 +1686,11 @@ function MPR:UpdateBackdrop()
     MPR_AuraInfo:SetBackdrop(Backdrop)
     MPR_AuraInfo:SetBackdropColor(unpack(BackdropColor))
     MPR_AuraInfo:SetBackdropBorderColor(BackdropBorderColor.R/255, BackdropBorderColor.G/255, BackdropBorderColor.B/255)
+    -- MPR Ignore Dispel List
+    MPR_Dispels.Title:SetText("|cff"..self.Colors["TITLE"].."MP Reporter|r - Ignore Dispel List")
+    MPR_Dispels:SetBackdrop(Backdrop)
+    MPR_Dispels:SetBackdropColor(unpack(BackdropColor))
+    MPR_Dispels:SetBackdropBorderColor(BackdropBorderColor.R/255, BackdropBorderColor.G/255, BackdropBorderColor.B/255)
     -- MPR Timers
     MPR_Timers.Title:SetText("|cff"..MPR.Colors["TITLE"].."MPR|r Timers:")
     MPR_Timers:SetBackdrop(Backdrop)
@@ -1716,6 +1760,7 @@ function MPR:ADDON_LOADED(addon)
     MPR_Settings = MPR_Settings or {}
     self.Settings = MPR_Settings
     self:DefineSetting("AURAINFO", true)
+    self:DefineSetting("IGNOREDISPELS", ignoreDispels)
     self:DefineSetting("TIMERS", true)
     self:DefineSetting("SELF", false)
     self:DefineSetting("SELF", false)
@@ -1788,6 +1833,7 @@ function MPR:ADDON_LOADED(addon)
     self:Initialize()
     MPR_Options:Initialize()
     MPR_AuraInfo:Initialize()
+    MPR_Dispels:Initialize()
     MPR_Timers:Initialize()
     MPR_Penalties:Initialize()
     self:MPR_CopyURL_Initialize()

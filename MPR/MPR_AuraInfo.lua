@@ -129,7 +129,7 @@ function MPR_AuraInfo:Initialize()
     MPR_AuraInfo:SetScript("OnUpdate", function(self, elapsed) if MPR.Settings["AURAINFO"] and MPR_AuraInfo:IsVisible() then MPR_AuraInfo:OnUpdate(elapsed) end end)
     MPR_AuraInfo:SetFrameStrata("FULLSCREEN_DIALOG")
     
-    MPR_AuraInfo:SetWidth(250)
+    MPR_AuraInfo:SetWidth(270)
     MPR_AuraInfo:SetHeight(238) -- 114, 176, 238
     
     MPR_AuraInfo.Title = MPR_AuraInfo:CreateFontString(nil, "OVERLAY", "GameTooltipText")
@@ -196,7 +196,7 @@ function MPR_AuraInfo:Initialize()
     Button5:SetWidth(14)
     Button5:SetPoint("TOPRIGHT", "BtnNext", "TOPLEFT", -2, 0)
     Button5:SetText("x")
-    Button5:SetScript("OnClick", function(self) MPR_AuraInfo.FrameNumber = nil; MPR_AuraInfo:Hide() end)
+    Button5:SetScript("OnClick", function(self) MPR_AuraInfo.FrameNumber = nil; MPR_AuraInfo:Hide(); BtnToggleAuraInfo:SetText("Show") end)
     
     Subtitle = MPR_AuraInfo:CreateFontString("Subtitle", "OVERLAY", "GameTooltipText")
     Subtitle:SetPoint("TOPLEFT", 8, -22)

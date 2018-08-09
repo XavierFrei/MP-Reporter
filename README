@@ -1,11 +1,12 @@
 < MP Reporter (https://github.com/Mihapro/MP-Reporter) >
-An addon for World of Warcraft: Wrath of the Lich King (3.3.5a 12340) that announces special events/boss acitons to your chat frame and raid channel.
+An addon for World of Warcraft: Wrath of the Lich King (3.3.5a 12340) that announces special events/boss actions to your chat frame and raid channel.
 
 Complete list of commands:
  • MPR Options - /MPR
  • MPR Aura Info - /MPR AI, /MPR AI <bossnum>
+ • MPR Ignore Dispels - /MPR D, /MPR DISPELS
  • MPR Timers - /MPR T, /MPR TIMERS
- • MPR TImer options - /MPR TO
+ • MPR Timer options - /MPR TO
  • MPR DKP Penalties - /MPR PENALTIES, /MPR DKP
  • Clear combat log entries - /MPR CCL, /MPR CLEAR
  • Clear death log entries - /MPR CDL
@@ -18,7 +19,7 @@ Here's a complete list of auras that can be tracked during encounters:
     2) Lady Deathwhisper:
         • Mind Controlled (percentage of members health and aura time left are also shown)
     3) Gunship Battle:
-        No auras, but shows some informations about ships (hitpoints, est. time left)
+        No auras, but shows some information about ships (hitpoints, est. time left)
     4) Deathbringer Saurfang:
         • Rune of Blood (aura time left)
     5) Festergut:
@@ -39,14 +40,14 @@ Here's a complete list of auras that can be tracked during encounters:
         • Frenzied Bloodthirst (time left is also shown) - members that have to bite
         • Uncontrollable Frenzy (percentage of members health is also shown) - members that failed to bite
    10) Valithria Dreamwalker:
-        Shows some informations about the boss (hitpoints, est. time left)
+        Shows some information about the boss (hitpoints, est. time left)
         • Emerald Vigor (stack count and time left are also shown)
    11) Sindragosa:
         • Mystic Buffet (stack count is also shown) - phase 3 debuff
         • Instability (stack count and time left are also shown) - caster debuff from Unchained Magic
         • Chilled to the Bone (stack count and time left are also shown) - melee debuff
    12) The Lich King:
-        • Necrotic Plague (time left is also shown) - useful for dispeling!
+        • Necrotic Plague (time left is also shown) - useful for dispelling!
         • Infest (percentage of members health is also shown)
         • Pain and Suffering (displays members that have 5 stacks) - transition stacking debuff
  • TRIAL OF THE CRUSADER •
@@ -69,7 +70,7 @@ Here's a complete list of auras that can be tracked during encounters:
         • Cleave Armor (stack count and time left are also shown)
    23) Halion:
         • Combustion/Consumption (stack count is also shown) - more stacks, bigger circle.
-        • Corporeality - during phase 3 some informations about Halion are shown
+        • Corporeality - during phase 3 some information about Halion is shown
 
 MPR Timers (command /MPR T or /MPR TIMERS) tracks boss ability cooldowns and prints time left warnings to raid chat if configured so. It is designed to match timers from Molten-WoW (molten-wow.com).
 Here's a complete list of abilities tracked by the addon:

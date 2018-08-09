@@ -181,13 +181,13 @@ function MPR_Timers:Initialize()
     MPR_Timers.CloseButton:SetWidth(14)
     MPR_Timers.CloseButton:SetPoint("TOPRIGHT", -8, -8)
     MPR_Timers.CloseButton:SetText("x")
-    MPR_Timers.CloseButton:SetScript("OnClick", function(self) MPR_Timers_Options:Hide(); MPR_Timers:Hide() end)
+    MPR_Timers.CloseButton:SetScript("OnClick", function(self) MPR_Timers_Options:Hide(); MPR_Timers:Hide(); BtnToggleTimers:SetText("Show") end)
     
-    MPR_Timers.OptionsButton = CreateFrame("button","BtnClose", MPR_Timers, "UIPanelButtonTemplate")
+    MPR_Timers.OptionsButton = CreateFrame("button","BtnOptions", MPR_Timers, "UIPanelButtonTemplate")
     MPR_Timers.OptionsButton:SetHeight(14)
-    MPR_Timers.OptionsButton:SetWidth(14)
+    MPR_Timers.OptionsButton:SetWidth(50)
     MPR_Timers.OptionsButton:SetPoint("TOPRIGHT", -24, -8)
-    MPR_Timers.OptionsButton:SetText("o")
+    MPR_Timers.OptionsButton:SetText("Options")
     MPR_Timers.OptionsButton:SetScript("OnClick", function(self) MPR_Timers_Options:Show() end)
     
     MPR_Timers.Label1 = MPR_Timers:CreateFontString("Label1", "OVERLAY", "GameTooltipText")
@@ -886,8 +886,8 @@ function MPR_Timers_Options:Initialize()
     self.CloseButton:SetScript("OnClick", function(self) MPR_Timers_Options:Hide() end)
     
     self:NewFS("Timer announcing:","FFFFFF",10,-16, 10)
-    self:NewCB("Self", "1E90FF", 102, -12, "T_SELF") -- [ ] Self
-    self:NewCB("Raid", "EE7600", 142, -12, "T_RAID") -- [ ] Raid
+    self:NewCB("Self", "1E90FF", 105, -12, "T_SELF") -- [ ] Self
+    self:NewCB("Raid", "EE7600", 145, -12, "T_RAID") -- [ ] Raid
     
     --[[ Lord Marrowgar ]]--
     self:NewFS("Lord Marrowgar","00CCFF",10,-30,10)

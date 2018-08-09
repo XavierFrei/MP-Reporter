@@ -19,7 +19,7 @@ function MPR_Options:Initialize()
 
     MPR_Options:SetPoint("CENTER",UIParent)
     MPR_Options:SetWidth(425)
-    MPR_Options:SetHeight(360)
+    MPR_Options:SetHeight(370)
     MPR_Options:EnableMouse(true)
     MPR_Options:SetMovable(true)
     MPR_Options:RegisterForDrag("LeftButton")
@@ -49,8 +49,8 @@ function MPR_Options:Initialize()
     local line2_offsetY = 28
     local line3_offsetY = 42
     local general_posY = -30
-    MPR_Options:NewFS("General","00CCFF",16,general_posY)
     local genLine1_posY = general_posY-line1_offsetY
+    MPR_Options:NewFS("General","00CCFF",16,general_posY)
     MPR_Options:NewCB("Self",    "1E90FF",    "SELF",16,genLine1_posY)        -- [ ] Self
     MPR_Options:NewCB("Raid",    "EE7600",    "RAID",56,genLine1_posY)        -- [ ] Raid
     MPR_Options:NewCB("Say",     "FFFFFF",    "SAY",100,genLine1_posY)        -- [ ] Say
@@ -58,18 +58,37 @@ function MPR_Options:Initialize()
 
     -- Reporting
     local reporting_posY = general_posY-34
-    MPR_Options:NewFS("Reporting","20B2AA",16,reporting_posY)
     local repLine1_posY = reporting_posY-line1_offsetY
     local repLine2_posY = reporting_posY-line2_offsetY
+    local repLine3_posY = reporting_posY-line3_offsetY
+    MPR_Options:NewFS("Reporting","20B2AA",16,reporting_posY)
     MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)                              -- [ ] Dispels
     MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)                     -- [ ] Mass Dispels
     MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)     -- [ ] Parry Haste
 
+    MPR_Options:NewFS("Ignore Dispel List","990099",16,repLine3_posY-5)
+    BtnToggleIgnoreDispels = CreateFrame("button","BtnToggleIgnoreDispels", MPR_Options, "UIPanelButtonTemplate")
+    BtnToggleIgnoreDispels:SetHeight(18)
+    BtnToggleIgnoreDispels:SetWidth(60)
+    BtnToggleIgnoreDispels:SetPoint("TOPLEFT",135,repLine3_posY-3)
+    BtnToggleIgnoreDispels:SetText("Show")
+    BtnToggleIgnoreDispels:SetScript("OnShow", function(self) BtnToggleIgnoreDispels:SetText(MPR_Dispels:IsVisible() and "Hide" or "Show") end)
+    BtnToggleIgnoreDispels:SetScript("OnClick", function(self)
+        if not MPR_Dispels:IsVisible() then
+            MPR_Dispels:Show()
+            MPR_Dispels:UpdateScrollFrame(MPR_Dispels.ScrollFrame)
+            BtnToggleIgnoreDispels:SetText("Hide")
+        else
+            MPR_Dispels:Hide()
+            BtnToggleIgnoreDispels:SetText("Show")
+        end
+    end)
+
     -- Reporting in
-    local reporting_in_posY = reporting_posY-50
-    MPR_Options:NewFS("Reporting in","3CB371",16,reporting_in_posY)
+    local reporting_in_posY = reporting_posY-65
     local reporting_in_line1_posY = reporting_in_posY-line1_offsetY
     local reporting_in_line2_posY = reporting_in_posY-line2_offsetY
+    MPR_Options:NewFS("Reporting in","3CB371",16,reporting_in_posY)
     MPR_Options:NewCB("Dungeon",nil,"REPORTIN_PARTY",16,reporting_in_line1_posY)
     MPR_Options:NewCB("Raid Instance",nil,"REPORTIN_RAIDINSTANCE",87,reporting_in_line1_posY)
     MPR_Options:NewCB("Battleground",nil,"REPORTIN_BATTLEGROUND",16,reporting_in_line2_posY)
@@ -83,19 +102,19 @@ function MPR_Options:Initialize()
     MPR_Options:NewFS("Aura Info","FF2200",16,aura_info_posY)
     MPR_Options:NewCB("Enable","FFFFFF","AURAINFO",16,aura_info_line1_offsetY)
 
-    local Button = CreateFrame("button","BtnToggleAuraInfo", MPR_Options, "UIPanelButtonTemplate")
-    Button:SetHeight(18)
-    Button:SetWidth(60)
-    Button:SetPoint("TOPLEFT", 16, aura_info_line2_offsetY-2)
-    Button:SetText("Show")
-    Button:SetScript("OnShow", function(self) Button:SetText(MPR_AuraInfo:IsVisible() and "Hide" or "Show") end)
-    Button:SetScript("OnClick", function(self)
+    BtnToggleAuraInfo = CreateFrame("button","BtnToggleAuraInfo", MPR_Options, "UIPanelButtonTemplate")
+    BtnToggleAuraInfo:SetHeight(18)
+    BtnToggleAuraInfo:SetWidth(60)
+    BtnToggleAuraInfo:SetPoint("TOPLEFT", 16, aura_info_line2_offsetY-2)
+    BtnToggleAuraInfo:SetText("Show")
+    BtnToggleAuraInfo:SetScript("OnShow", function(self) BtnToggleAuraInfo:SetText(MPR_AuraInfo:IsVisible() and "Hide" or "Show") end)
+    BtnToggleAuraInfo:SetScript("OnClick", function(self)
         if not MPR_AuraInfo:IsVisible() then
             MPR_AuraInfo:UpdateFrame()
-            Button:SetText("Hide")
+            BtnToggleAuraInfo:SetText("Hide")
         else
             MPR_AuraInfo:Hide()
-            Button:SetText("Show")
+            BtnToggleAuraInfo:SetText("Show")
         end
     end)
 
@@ -120,15 +139,15 @@ function MPR_Options:Initialize()
     local timers_posY = aura_info_posY-50
     MPR_Options:NewFS("Timers","1E90FF",16,timers_posY)
     MPR_Options:NewCB("Enable","FFFFFF","TIMERS",64,timers_posY+2)
-    local Button2 = CreateFrame("button","BtnToggleTimers", MPR_Options, "UIPanelButtonTemplate")
-    Button2:SetWidth(60)
-    Button2:SetHeight(18)
-    Button2:SetPoint("TOPLEFT", 120, timers_posY+1)
-    Button2:SetText("Show")
-    Button2:SetScript("OnShow", function(self) Button2:SetText(MPR_Timers:IsVisible() and "Hide" or "Show") end)
-    Button2:SetScript("OnClick", function(self)
+    BtnToggleTimers = CreateFrame("button","BtnToggleTimers", MPR_Options, "UIPanelButtonTemplate")
+    BtnToggleTimers:SetWidth(60)
+    BtnToggleTimers:SetHeight(18)
+    BtnToggleTimers:SetPoint("TOPLEFT", 120, timers_posY+1)
+    BtnToggleTimers:SetText("Show")
+    BtnToggleTimers:SetScript("OnShow", function(self) BtnToggleTimers:SetText(MPR_Timers:IsVisible() and "Hide" or "Show") end)
+    BtnToggleTimers:SetScript("OnClick", function(self)
         MPR_Timers:Toggle()
-        Button2:SetText(MPR_Timers:IsVisible() and "Hide" or "Show")
+        BtnToggleTimers:SetText(MPR_Timers:IsVisible() and "Hide" or "Show")
     end)
 
     -- Player Deaths
@@ -260,7 +279,7 @@ function MPR_Options:Initialize()
     -- Window Style
     local window_style_posY = ml_posY-62
     MPR_Options:NewFS("Window Style","FF9912",216,window_style_posY)
-    MPR_Options:NewFS("Border Color:","FFFFFF",219,window_style_posY-line1_offsetY-2)
+    MPR_Options:NewFS("Border Color:","FFFFFF",218,window_style_posY-line1_offsetY-2)
     -- GRAY (A9A9A9 / 169 169 169)
     MPR_Options.CB_Gray = CreateFrame("CheckButton", "CB_Gray", MPR_Options, "UICheckButtonTemplate")
     MPR_Options.CB_Gray:SetWidth(20)
