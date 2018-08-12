@@ -3,6 +3,7 @@ An addon for World of Warcraft: Wrath of the Lich King (3.3.5a 12340) that annou
 
 Complete list of commands:
  • MPR Options - /MPR
+ • MPR Commands - /MPR HELP, /MPR CMD, /MPR COMMANDS
  • MPR Aura Info - /MPR AI, /MPR AI <bossnum>
  • MPR Ignore Dispels - /MPR D, /MPR DISPELS
  • MPR Timers - /MPR T, /MPR TIMERS
@@ -72,7 +73,7 @@ Here's a complete list of auras that can be tracked during encounters:
         • Combustion/Consumption (stack count is also shown) - more stacks, bigger circle.
         • Corporeality - during phase 3 some information about Halion is shown
 
-MPR Timers (command /MPR T or /MPR TIMERS) tracks boss ability cooldowns and prints time left warnings to raid chat if configured so. It is designed to match timers from Molten-WoW (molten-wow.com).
+MPR Timers (command /MPR T or /MPR TIMERS) tracks boss ability cooldowns and prints time left warnings to raid chat if configured so.
 Here's a complete list of abilities tracked by the addon:
  • ICECROWN CITADEL •
     • Lord Marrowgar: Bone Spike Graveyard, Bone Storm
@@ -90,6 +91,6 @@ Here's a complete list of abilities tracked by the addon:
 
 MPR Death Report (configured in options, command /MPR) is a system announcing player deaths. It also logs them, joins by encounters and sorts by time, so encounter deaths can be easily checked again after raids or any other time in future.
 
-Another useful thing from the addon users, if you whisper them "raidlocks" or "raid locks", the addon will automatically whisper back list of instances and modes you are locked to.
+Another useful thing from the addon users, if you whisper them "raidlocks" or "rl", the addon will automatically whisper back a list of instances and modes they are locked to.
 
 To see more features the addon offers, see the options frame ingame.

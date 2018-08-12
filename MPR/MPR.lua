@@ -1,9 +1,10 @@
 MPR = CreateFrame("frame","MPRFrame")
-MPR.Version = "v2.94"
-MPR.VersionNotes = {"Added: Ardent Defender & Sindragosa Trinket", "Added: Customizable Ignore Dispel List", "Changed: Aura Mastery now shows respective Aura which it was used with", "Fixed: Removed Parry Haste in Halion Twilight Phase"}
+MPR.Version = "v2.95"
+MPR.VersionNotes = {"Added: Help Command", "Added: Optional Tank Cooldowns setting", "Fixed: Some SpellCreate timers"}
 local ClassColors = {["DEATHKNIGHT"] = "C41F3B", ["DEATH KNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA",
     ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
 local InstanceShortNames = {["Icecrown Citadel"] = "ICC", ["Vault of Archavon"] = "VOA", ["Trial of the Crusader"] = "TOC", ["Naxxramas"] = "NAXX", ["The Ruby Sanctum"] = "RS"}
+local mprCommands = {"Commands - /MPR HELP, /MPR CMD, /MPR COMMANDS", "Options - /MPR", "Aura Info - /MPR AI, /MPR AI <bossnum>", "Ignore Dispels - /MPR D, /MPR DISPELS", "Timers - /MPR T, /MPR TIMERS", "Timer Options - /MPR TO", "DKP Penalties - /MPR DKP, /MPR PENALTIES", "Clear Combat Log - /MPR CCL, /MPR CLEAR", "Clear MPR Death Log - /MPR CDL"}
 MPR.BossData = {
     -- Icecrown Citadel
     [0] = {["ENCOUNTER"] = "N/a", ["MSG_START"] = nil, ["MSG_FINISH"] = nil},
@@ -230,7 +231,7 @@ local ClassBIS = {
 ------ You can change these settings! ------
 -- Created objects --
 --| Output: Player prepares [Spell]. |--
-local spellsCreate = {["Great Feast"] = 180, ["Fish Feast"] = 180, ["Ritual of Souls"] = 180, ["Ritual of Summoning"] = 300, ["Ritual of Refreshment"] = 180}
+local spellsCreate = {["Great Feast"] = 180, ["Fish Feast"] = 180, ["Soul Portal"] = 180, ["Summoning Portal"] = 300, ["Refreshment Portal"] = 180}
 
 -- Damage & Healing --
 --| Output: [Spell] hits Target for Amount [(Critical)]. |--
@@ -241,7 +242,7 @@ local spellsHeal = {"Rune of Blood"}
 local spellsPeriodicHeal = {}
 --| Output: [Spell] hits: Target1 (Amount3), Target2 (Amount3), Target3 (Amount3), ... |--
 --| Filter: UnitIsPlayer(Target)
-local spellsAOEDamage = {"Dark Martyrdom", "Deathchill Blast", "Vengeful Blast","Unstable Ooze Explosion", "Malleable Goo", "Choking Gas Explosion", "Frost Bomb", "Blistering Cold", "Defile", "Shadow Trap", "Trample"}
+local spellsAOEDamage = {"Dark Martyrdom", "Deathchill Blast", "Vengeful Blast", "Unstable Ooze Explosion", "Malleable Goo", "Choking Gas Explosion", "Frost Bomb", "Blistering Cold", "Defile", "Shadow Trap", "Trample"}
 --| Output: Player damages Target with [Spell]. |--
 local reportDamageOnTarget = {}
 
@@ -253,9 +254,9 @@ local npcBossSpellSummon = {"Vengeful Shade"} -- Boss summons, destination is un
 
 -- Casts (SPELL_CAST_START and SPELL_CAST_SUCCESS) --
 --| Output: Unit casts [Spell]. |--
-local spellsCast = {"Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Ritual of Souls", "Mana Tide Totem", 698, 69381}
--- [698]   = Ritual of Summoning
+local spellsCast = {"Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Mana Tide Totem", 69381}
 -- [69381] = Drums: Gift of the Wilds
+local tankCooldownsCast = {"Divine Protection", "Icebound Fortitude", "Vampiric Blood", "Anti-Magic Shell", "Barkskin", "Survival Instincts", "Frenzied Regeneration", "Shield Wall", "Last Stand"}
 local npcSpellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex"}
 --| Output: Unit casts [Spell] on Target. |--
 local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
@@ -263,7 +264,8 @@ local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", 
 local spellsBossCastOnTarget = {"Rune of Blood", "Vile Gas", "Swarming Shadows", "Necrotic Plague", "Soul Reaper"} -- If sourceName isn't important (ex. Boss casting).
 
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
-local aurasApplied = {"Eyes of Twilight", "Aegis of Dalaran", "Ardent Defender"}
+local aurasApplied = {"Eyes of Twilight" }
+local tankAurasApplied = {"Aegis of Dalaran", "Ardent Defender", "Enraged Defense"}
 --| Output: [Spell] applied on Target. |--
 --| Filter: UnitIsPlayer(Target)
 local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion", "Soulstone Resurrection"}
@@ -688,8 +690,11 @@ function SlashCmdList.MPR(msg, editbox)
         MPR_Penalties:Toggle()
     elseif msg == "ccl" or msg == "clear" then
         MPR:ClearCombatLog()
+        self:SelfReport("Combat log entries cleared.")
     elseif msg == "cdl" then
         MPR:ClearDeathLog()
+    elseif msg == "help" or msg == "cmd" or msg == "commands" then
+        MPR:ReportCommands()
     elseif msg ~= "" then
         MPR:SelfReport("Unknown command.")
     else -- Options
@@ -704,7 +709,7 @@ end
 function MPR:CHAT_MSG_WHISPER(...)
     local Message, Player = ...
     Message = strlower(Message)
-    if Message == "raidlocks" or Message == "raid locks" then
+    if Message == "raidlocks" or Message == "rl" then
         self:ReportLocks(Player)
     end
 end
@@ -1210,6 +1215,8 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                     else
                         self:ReportCast(sourceName,spellId)
                     end
+                elseif self.Settings["REPORT_TANKCDS"] and contains(tankCooldownsCast,spellName) then
+                    self:ReportCast(sourceName,spellId)
                 elseif contains(spellsCastOnTarget,spellName) then
                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                 end
@@ -1369,12 +1376,18 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 elseif spellId == 75495 then -- [Eyes of Twilight]
                     local itemID = 54589 -- [Glowing Twilight Scale] (284)
                     self:ReportItemUsed(sourceName,itemID)
-                elseif spellId == 71635 then -- [Aegis of Dalaran]
+                else
+                    self:ReportApplied(sourceName,spellId)
+                end
+            elseif contains(tankAurasApplied,spellName) and self.Settings["REPORT_TANKCDS"] then
+                if spellId == 71635 then -- [Aegis of Dalaran]
                     local itemID = 50361 -- [Sindragosa's Flawless Fang] (264)
                     self:ReportItemUsed(sourceName,itemID)
                 elseif spellId == 71638 then -- [Aegis of Dalaran]
                     local itemID = 50364 -- [Sindragosa's Flawless Fang] (277)
                     self:ReportItemUsed(sourceName,itemID)
+                elseif spellName == "Ardent Defender" then
+                    self:ReportProcced(sourceName,spellId)
                 else
                     self:ReportApplied(sourceName,spellId)
                 end
@@ -1520,9 +1533,12 @@ function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target.
     self:HandleReport(string.format("%s applied on %s",spell(SPELL,true),TARGET), string.format("%s applied on %s",spell(SPELL),unit(TARGET)))
 end
 function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item].
-    self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)))
+    self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)), string.format("%s used %s",UNIT,item(ITEM)))
 end
-function MPR:ReportApplied(UNIT,SPELL) -- [Spell] applied on Unit.
+function MPR:ReportApplied(UNIT,SPELL) -- Unit gains [Spell].
+    self:HandleReport(string.format("%s gains %s",UNIT,spell(SPELL,true)), string.format("%s gains %s",unit(UNIT),spell(SPELL)))
+end
+function MPR:ReportProcced(UNIT,SPELL) -- [Spell] procced on Unit.
     self:HandleReport(string.format("%s procced on %s",spell(SPELL,true),UNIT), string.format("%s procced on %s",spell(SPELL),unit(UNIT)))
 end
 
@@ -1553,7 +1569,6 @@ end
 
 function MPR:ReportValkyrGrab(UNIT) -- X Unit grabbed! X
     self:HandleReport(string.format("{rt7} %s grabbed! {rt7}",UNIT),string.format("{rt7} %s grabbed! {rt7}",unit(UNIT)))
-    --self:RaidWarning(string.format("{rt7} %s grabbed! {rt7}",UNIT))
 end
 
 function MPR:CanReportToRaid()
@@ -1653,7 +1668,7 @@ function MPR:ReportLocks(Player)
     if #Locks > 0 then
         SendChatMessage(string.format("Raid Locks: %s",table.concat(Locks,", ")), "WHISPER", nil, Player)
     else
-        SendChatMessage("No Raid Locks.", "WHISPER", "Common", Player)
+        SendChatMessage("No Raid Locks.", "WHISPER", nil, Player)
     end
 end
 
@@ -1666,6 +1681,12 @@ function MPR:GetGuildMemberInfo(Name)
         if Name == n then
             return i, GetGuildRosterInfo(i)
         end
+    end
+end
+
+function MPR:ReportCommands()
+    for _,line in pairs(mprCommands) do
+        MPR:SelfReport(line,true)
     end
 end
 
@@ -1775,6 +1796,7 @@ function MPR:ADDON_LOADED(addon)
     self:DefineSetting("REPORT_DISPELS", false)
     self:DefineSetting("REPORT_MASSDISPELS", false)
     self:DefineSetting("REPORT_PARRYHASTE", false)
+    self:DefineSetting("REPORT_TANKCDS", false)
     self:DefineSetting("PD_REPORT", true)
     self:DefineSetting("PD_SELF", true)
     self:DefineSetting("PD_RAID", false)

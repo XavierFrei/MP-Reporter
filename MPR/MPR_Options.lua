@@ -19,7 +19,7 @@ function MPR_Options:Initialize()
 
     MPR_Options:SetPoint("CENTER",UIParent)
     MPR_Options:SetWidth(425)
-    MPR_Options:SetHeight(370)
+    MPR_Options:SetHeight(384)
     MPR_Options:EnableMouse(true)
     MPR_Options:SetMovable(true)
     MPR_Options:RegisterForDrag("LeftButton")
@@ -65,12 +65,13 @@ function MPR_Options:Initialize()
     MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)                              -- [ ] Dispels
     MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)                     -- [ ] Mass Dispels
     MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)     -- [ ] Parry Haste
+    MPR_Options:NewCB("Tank Cooldowns",nil,"REPORT_TANKCDS",16,repLine3_posY)                       -- [ ] Tank Cooldowns
 
-    MPR_Options:NewFS("Ignore Dispel List","990099",16,repLine3_posY-5)
+    MPR_Options:NewFS("Ignore Dispel List","990099",16,repLine3_posY-19)
     BtnToggleIgnoreDispels = CreateFrame("button","BtnToggleIgnoreDispels", MPR_Options, "UIPanelButtonTemplate")
     BtnToggleIgnoreDispels:SetHeight(18)
     BtnToggleIgnoreDispels:SetWidth(60)
-    BtnToggleIgnoreDispels:SetPoint("TOPLEFT",135,repLine3_posY-3)
+    BtnToggleIgnoreDispels:SetPoint("TOPLEFT",135,repLine3_posY-17)
     BtnToggleIgnoreDispels:SetText("Show")
     BtnToggleIgnoreDispels:SetScript("OnShow", function(self) BtnToggleIgnoreDispels:SetText(MPR_Dispels:IsVisible() and "Hide" or "Show") end)
     BtnToggleIgnoreDispels:SetScript("OnClick", function(self)
@@ -85,7 +86,7 @@ function MPR_Options:Initialize()
     end)
 
     -- Reporting in
-    local reporting_in_posY = reporting_posY-65
+    local reporting_in_posY = reporting_posY-79
     local reporting_in_line1_posY = reporting_in_posY-line1_offsetY
     local reporting_in_line2_posY = reporting_in_posY-line2_offsetY
     MPR_Options:NewFS("Reporting in","3CB371",16,reporting_in_posY)
@@ -457,7 +458,7 @@ function MPR_Options:Initialize()
     end)
 
     --Report Prefix Text
-    local prefix_posY = kb_posY-62
+    local prefix_posY = kb_posY-65
     local prefix_value = MPR.Settings["PREFIX_VALUE"]
     MPR_Options:NewFS("Report Prefix", "1E90FF", 216, prefix_posY)
     MPR_Options:NewFS("(max. 10 characters)","FFFFFF",300,prefix_posY-3,9)
