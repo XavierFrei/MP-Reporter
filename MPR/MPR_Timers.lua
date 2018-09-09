@@ -1,8 +1,8 @@
 MPR_Timers = CreateFrame("Frame", "MPR LK Timers", UIParent)
 MPR_Timers.TimeSinceLastUpdate = 0
 MPR_Timers.LichKingWarnings = {
--- Will warn: "Warning: The Lich King has {%%}% HP remaining! {Message}"
---  [%%] = {Warned, Message},
+    -- Will warn: "Warning: The Lich King has {%%}% HP remaining! {Message}"
+    --  [%%] = {Warned, Message},
     [77] = {false, nil},
     [74] = {false, "Transition soon!"},
     [47] = {false, nil},
@@ -97,45 +97,45 @@ MPR_Timers.InfoTimers = {
 -- structure generated as timers are set
 MPR_Timers.DataTimers = {[1] = {}, [2] = {}, [3] = {}, [4] = {}, [5] = {}, [6] = {}, [7] = {}, [8] = {}, [9] = {}, [10] = {}, [11] = {}, [12] = {}, [13] = {}, [20] = {}, [21] = {}, [22] = {}, [23] = {}}
 MPR_Timers.DefaultTimerAnnounces = {
--- EXAMPLE:
---  [EncounterID] = {
---      [AbilityID] = {[Second] = {false, IconID}, [Second2] = {false, IconID}},
---  },
---[[ letting people tick announces for themselves in options
-    [7] = { -- PP
-        [1] = {[5] = {false, 7}},
-        [2] = {[5] = {false, 8}, [3] = {false, 8}},
-        [3] = {[5] = {false, 2}},
-    },
-    [8] = { -- BPC
-        [1] = {[10] = {false, 3}, [5] = {false, 3}},
-    },
-    [9] = { -- BQL
-        [1] = {[20] = {false, 3}, [10] = {false, 3}}, -- Incite Terror: 20s,10s
-        [2] = {[5] = {false, 7}}, -- Swarming Shadows: 5s
-        [3] = {[30] = {false, 8}, [20] = {false, 8}, [10] = {false, 8}, [5] = {false, 7}}, -- Berserk: 30s,20s,10s,5s
-    },
-    [11] = { -- Sindragosa
-        [1] = {[10] = {false, 8}, [5] = {false, 8}},
-        [2] = {[10] = {false, 6}, [5] = {false, 6}},
-        [3] = {[3] = {false, 7}},
-    },
-    [12] = { -- LK
-        [1] = {[3] = {false, 8}, [2] = {false, 8}, [1] = {false, 8}},
-        [2] = {[10] = {false, 4}, [5] = {false, 4}},
-        [3] = {[10] = {false, 7}, [5] = {false, 7}},
-        [4] = {[10] = {false, 6}, [5] = {false, 6}},
-        [5] = {[3] = {false, 4}},
-        [6] = {[5] = {false, 3}},
-        [7] = {[5] = {false, 4}},
-    },
-    [23] = { -- Halion
-        [1] = {[10] = {false, 2}, [5] = {false, 2}},
-        [2] = {[5] = {false, 2}},
-        [3] = {[5] = {false, 3}, [3] = {false, 3}},
-        [4] = {[5] = {false, 3}},
-    },
-]]
+    -- EXAMPLE:
+    --  [EncounterID] = {
+    --      [AbilityID] = {[Second] = {false, IconID}, [Second2] = {false, IconID}},
+    --  },
+    --[[ letting people tick announces for themselves in options
+        [7] = { -- PP
+            [1] = {[5] = {false, 7}},
+            [2] = {[5] = {false, 8}, [3] = {false, 8}},
+            [3] = {[5] = {false, 2}},
+        },
+        [8] = { -- BPC
+            [1] = {[10] = {false, 3}, [5] = {false, 3}},
+        },
+        [9] = { -- BQL
+            [1] = {[20] = {false, 3}, [10] = {false, 3}}, -- Incite Terror: 20s,10s
+            [2] = {[5] = {false, 7}}, -- Swarming Shadows: 5s
+            [3] = {[30] = {false, 8}, [20] = {false, 8}, [10] = {false, 8}, [5] = {false, 7}}, -- Berserk: 30s,20s,10s,5s
+        },
+        [11] = { -- Sindragosa
+            [1] = {[10] = {false, 8}, [5] = {false, 8}},
+            [2] = {[10] = {false, 6}, [5] = {false, 6}},
+            [3] = {[3] = {false, 7}},
+        },
+        [12] = { -- LK
+            [1] = {[3] = {false, 8}, [2] = {false, 8}, [1] = {false, 8}},
+            [2] = {[10] = {false, 4}, [5] = {false, 4}},
+            [3] = {[10] = {false, 7}, [5] = {false, 7}},
+            [4] = {[10] = {false, 6}, [5] = {false, 6}},
+            [5] = {[3] = {false, 4}},
+            [6] = {[5] = {false, 3}},
+            [7] = {[5] = {false, 4}},
+        },
+        [23] = { -- Halion
+            [1] = {[10] = {false, 2}, [5] = {false, 2}},
+            [2] = {[5] = {false, 2}},
+            [3] = {[5] = {false, 3}, [3] = {false, 3}},
+            [4] = {[5] = {false, 3}},
+        },
+    ]]
 }
 MPR_Timers.ValkyrCount = 0
 MPR_Timers.ValkyrTable = {} -- {IconID, Health, HealthMax, Speed}
@@ -161,50 +161,50 @@ function MPR_Timers:Initialize()
     MPR_Timers:SetScript("OnDragStart", function(self) MPR_Timers:StartMoving() end)
     MPR_Timers:SetScript("OnDragStop", function(self) MPR_Timers:StopMovingOrSizing() end)
     MPR_Timers:SetFrameStrata("FULLSCREEN_DIALOG")
-    
+
     MPR_Timers.Title = MPR_Timers:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     MPR_Timers.Title:SetPoint("TOPLEFT", 8, -8)
     MPR_Timers.Title:SetTextColor(190/255, 190/255, 190/255)
     MPR_Timers.Title:SetText("|cff"..MPR.Colors["TITLE"].."MPR|r Timers:")
     MPR_Timers.Title:SetFont("Fonts\\FRIZQT__.TTF", 11, "OUTLINE")
     MPR_Timers.Title:SetShadowOffset(1, -1)
-    
+
     MPR_Timers.Title2 = MPR_Timers:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     MPR_Timers.Title2:SetPoint("LEFT", MPR_Timers.Title, "RIGHT", 0, 0)
     MPR_Timers.Title2:SetTextColor(190/255, 190/255, 190/255)
     MPR_Timers.Title2:SetText("|cFF00CCFF"..MPR.BossData[MPR_Timers.BossNum or 0]["ENCOUNTER"])
     MPR_Timers.Title2:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
     MPR_Timers.Title2:SetShadowOffset(1, -1)
-    
+
     MPR_Timers.CloseButton = CreateFrame("button","BtnClose", MPR_Timers, "UIPanelButtonTemplate")
     MPR_Timers.CloseButton:SetHeight(14)
     MPR_Timers.CloseButton:SetWidth(14)
     MPR_Timers.CloseButton:SetPoint("TOPRIGHT", -8, -8)
     MPR_Timers.CloseButton:SetText("x")
     MPR_Timers.CloseButton:SetScript("OnClick", function(self) MPR_Timers_Options:Hide(); MPR_Timers:Hide(); BtnToggleTimers:SetText("Show") end)
-    
+
     MPR_Timers.OptionsButton = CreateFrame("button","BtnOptions", MPR_Timers, "UIPanelButtonTemplate")
     MPR_Timers.OptionsButton:SetHeight(14)
     MPR_Timers.OptionsButton:SetWidth(50)
     MPR_Timers.OptionsButton:SetPoint("TOPRIGHT", -24, -8)
     MPR_Timers.OptionsButton:SetText("Options")
     MPR_Timers.OptionsButton:SetScript("OnClick", function(self) MPR_Timers_Options:Show() end)
-    
+
     MPR_Timers.Label1 = MPR_Timers:CreateFontString("Label1", "OVERLAY", "GameTooltipText")
     MPR_Timers.Label1:SetPoint("TOPLEFT", 8, -22)
     MPR_Timers.Label1:SetFont("Fonts\\FRIZQT__.TTF", 10, nil)
     MPR_Timers.Label1:SetText("|cFFbebebeTimer1|r")
-    
+
     MPR_Timers.Label2 = MPR_Timers:CreateFontString("Label2", "OVERLAY", "GameTooltipText")
     MPR_Timers.Label2:SetPoint("TOPLEFT", 8, -36)
     MPR_Timers.Label2:SetFont("Fonts\\FRIZQT__.TTF", 10, nil)
     MPR_Timers.Label2:SetText("|cFFbebebeTimer2|r")
-        
+
     MPR_Timers.Label3 = MPR_Timers:CreateFontString("Label3", "OVERLAY", "GameTooltipText")
     MPR_Timers.Label3:SetPoint("TOPLEFT", 8, -50)
     MPR_Timers.Label3:SetFont("Fonts\\FRIZQT__.TTF", 10, nil)
     MPR_Timers.Label3:SetText("Grabbed: ")
-    
+
     MPR_Timers_Options:Initialize()
 end
 
@@ -220,65 +220,65 @@ function MPR_Timers:Toggle()
 end
 
 function MPR_Timers:GetSpellID(spellName)
-           -- Lord Marrowgar
-    return spellName == "Bone Spike Graveyard"   and 69057 or
-           spellName == "Bone Storm"             and 69076 or
-           -- Lady Deathwhisper
-           spellName == "Summon Vengeful Shade"  and 71426 or
-           -- Gunship Battle
-           spellName == "Below Zero"             and 69705 or
-           -- Deathbringer Saurfang
-           spellName == "Rune of Blood"          and 72410 or
-           -- Festergut
-           spellName == "Gas Spore"              and 69278 or
-           spellName == "Gastric Bloat"          and 72219 or
-           -- Rotface
-           spellName == "Slime Spray"            and 69508 or
-           spellName == "Mutated Infection"      and 69674 or
-           spellName == "Vile Gas"               and 69240 or
-           -- Professor Putricide
-           spellName == "Unstable Experiment"    and 70351 or
-           spellName == "Malleable Goo"          and 70852 or
-           spellName == "Choking Gas Bomb"       and 71255 or
-           -- Blood Prince Council
-           spellName == "Empowered Shock Vortex" and (self.EmpoweredPrince ~= "Prince Valanar" and 71944 or 72039) or
-           spellName == "Shadow Resonance"       and 71943 or
-           -- Blood-Queen Lana'thel
-           spellName == "Incite Terror"          and 73070 or
-           spellName == "Swarming Shadows"       and 71264 or
-           spellName == "Berserk"                and 26662 or
-           -- Valithria Dreamwalker
-           spellName == "Summon Portal"          and (self:IsNormal() and 72224 or 72480) or
-           -- Sindragosa
-           spellName == "Blistering Cold"        and 70123 or
-           spellName == "Frost Beacon"           and 70126 or
-           -- The Lich King
-           spellName == "Summon Shadow Trap"     and 73539 or
-           spellName == "Shadow Trap"            and 73529 or
-           spellName == "Harvest Soul/s"         and (self:IsNormal() and 74325 or 74297) or
-           spellName == "Summon Val'kyr"         and 69037 or
-           spellName == "Defile"                 and 72762 or
-           spellName == "Raging Spirit"          and 69200 or
-           spellName == "Quake"                  and 72262 or
-           spellName == "Necrotic Plague"        and self:RaidMode(70337,73912,73913,73914) or
-           -- Gormok the Impaler
-           spellName == "Impale"                 and 66331 or
-           spellName == "Staggering Stomp"       and 67648 or 
-           spellName == "Rising Anger"           and 66636 or
-           -- Acidmaw & Dreadscale
-           spellName == "Slime Pool"             and 66883 or
-           -- Saviana Ragefire
-           spellName == "Enrage"                 and 78722 or
-           -- Baltharus the Warborn
-           spellName == "Blade Tempest"          and 75125 or
-           -- General Zarithrian
-           spellName == "Cleave Armor"           and 74367 or
-           spellName == "Intimidating Roar"      and 74384 or       
-           -- Halion
-           spellName == "Meteor Strike"          and self:RaidMode(74648,75877,75878,75879) or
-           spellName == "Fiery Combustion"       and 74562 or
-           spellName == "Twilight Cutter"        and 74769 or 
-           spellName == "Soul Consumption"       and 74792
+    -- Lord Marrowgar
+    return spellName == "Bone Spike Graveyard"    and 69057 or
+            spellName == "Bone Storm"             and 69076 or
+            -- Lady Deathwhisper
+            spellName == "Summon Vengeful Shade"  and 71426 or
+            -- Gunship Battle
+            spellName == "Below Zero"             and 69705 or
+            -- Deathbringer Saurfang
+            spellName == "Rune of Blood"          and 72410 or
+            -- Festergut
+            spellName == "Gas Spore"              and 69278 or
+            spellName == "Gastric Bloat"          and 72219 or
+            -- Rotface
+            spellName == "Slime Spray"            and 69508 or
+            spellName == "Mutated Infection"      and 69674 or
+            spellName == "Vile Gas"               and 69240 or
+            -- Professor Putricide
+            spellName == "Unstable Experiment"    and 70351 or
+            spellName == "Malleable Goo"          and 70852 or
+            spellName == "Choking Gas Bomb"       and 71255 or
+            -- Blood Prince Council
+            spellName == "Empowered Shock Vortex" and (self.EmpoweredPrince ~= "Prince Valanar" and 71944 or 72039) or
+            spellName == "Shadow Resonance"       and 71943 or
+            -- Blood-Queen Lana'thel
+            spellName == "Incite Terror"          and 73070 or
+            spellName == "Swarming Shadows"       and 71264 or
+            spellName == "Berserk"                and 26662 or
+            -- Valithria Dreamwalker
+            spellName == "Summon Portal"          and (self:IsNormal() and 72224 or 72480) or
+            -- Sindragosa
+            spellName == "Blistering Cold"        and 70123 or
+            spellName == "Frost Beacon"           and 70126 or
+            -- The Lich King
+            spellName == "Summon Shadow Trap"     and 73539 or
+            spellName == "Shadow Trap"            and 73529 or
+            spellName == "Harvest Soul/s"         and (self:IsNormal() and 74325 or 74297) or
+            spellName == "Summon Val'kyr"         and 69037 or
+            spellName == "Defile"                 and 72762 or
+            spellName == "Raging Spirit"          and 69200 or
+            spellName == "Quake"                  and 72262 or
+            spellName == "Necrotic Plague"        and self:RaidMode(70337,73912,73913,73914) or
+            -- Gormok the Impaler
+            spellName == "Impale"                 and 66331 or
+            spellName == "Staggering Stomp"       and 67648 or
+            spellName == "Rising Anger"           and 66636 or
+            -- Acidmaw & Dreadscale
+            spellName == "Slime Pool"             and 66883 or
+            -- Saviana Ragefire
+            spellName == "Enrage"                 and 78722 or
+            -- Baltharus the Warborn
+            spellName == "Blade Tempest"          and 75125 or
+            -- General Zarithrian
+            spellName == "Cleave Armor"           and 74367 or
+            spellName == "Intimidating Roar"      and 74384 or
+            -- Halion
+            spellName == "Meteor Strike"          and self:RaidMode(74648,75877,75878,75879) or
+            spellName == "Fiery Combustion"       and 74562 or
+            spellName == "Twilight Cutter"        and 74769 or
+            spellName == "Soul Consumption"       and 74792
 end
 
 function MPR_Timers:RaidMode(Mode10N, Mode25N, Mode10H, Mode25H)
@@ -292,11 +292,11 @@ function MPR_Timers:Is25Man() return self:RaidMode(false, true, false, true) end
 
 function MPR_Timers:OnUpdate(elapsed)
     local bWhite = GetTime()%1.5 < 0.75
-    
+
     local Label1HasText = nil
     local Label2HasText = nil
     local Label3HasText = nil
-    
+
     local e = self.BossNum
     if e then
         self.DataTimers[e] = self.DataTimers[e] or {}
@@ -304,7 +304,7 @@ function MPR_Timers:OnUpdate(elapsed)
             local info = self.InfoTimers[e][i]
             local timer = self.DataTimers[e][i]
             local warns = MPR.Settings["TIMER_ANNOUNCES"][e] and MPR.Settings["TIMER_ANNOUNCES"][e][i] or nil
-            
+
             if timer then -- timer must be set
                 local Seconds, String, Color
                 Seconds = round(timer,0,true)
@@ -323,7 +323,7 @@ function MPR_Timers:OnUpdate(elapsed)
                     self.Label3:Show()
                     Label3HasText = true
                 end
-                
+
                 if warns then
                     if warns[Seconds] and not warns[Seconds][1] then
                         warns[Seconds][1] = true
@@ -343,11 +343,11 @@ function MPR_Timers:OnUpdate(elapsed)
             end
         end
     end
-    
+
     if not Label3HasText and (e ~= 12 or self.QuakeCount ~= 1) then
         self.Label3:SetText("")
         self.Label3:Hide()
-        if not Label2HasText then 
+        if not Label2HasText then
             self.Label2:SetText("")
             self.Label2:Hide()
             if not Label1HasText then
@@ -357,9 +357,9 @@ function MPR_Timers:OnUpdate(elapsed)
             end
         end
     end
-    
+
     self:SetHeight(Label3HasText and 69 or Label2HasText and 56 or 43)
-    
+
     if e == 12 then -- LK only
         self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed
         if self.TimeSinceLastUpdate >= MPR.Settings["UPDATEFREQUENCY"] then
@@ -375,7 +375,7 @@ function MPR_Timers:Update()
     local countValkyr = 0
     local arrayGrabbed = {}
     local Color = {R = 1, G = 1, B = 1}
-    
+
     local LKHealthPct = nil
     for i=1,GetNumRaidMembers() do
         local UnitIDTarget = (i > 0 and "raid"..i or "").."target"
@@ -388,11 +388,11 @@ function MPR_Timers:Update()
         self.LichKingWarnings[LKHealthPct][1] = true
         MPR:RaidReport("Warning: The Lich King has "..LKHealthPct.."% HP remaining! "..(self.LichKingWarnings[LKHealthPct][2] or ""))
     end
-    
+
     if self.QuakeCount == 1 then -- During Phase 2 only
         for i=0,GetNumRaidMembers() do
             local UnitID = i == 0 and "player" or "raid"..i
-            
+
             -- Check if grabbed
             if UnitInVehicle(UnitID) then
                 if not self.GrabbedPlayers[UnitName(UnitID)] then -- Insert grabbed player
@@ -407,8 +407,7 @@ function MPR_Timers:Update()
                 self.GrabbedPlayers[UnitName(UnitID)] = nil
             end
         end
-        
-            
+
         -- Print grabbed players
         for _,Unit in pairs(self.GrabbedPlayers) do
             table.insert(arrayGrabbed,(Unit.Icon and Unit.Icon > 0 and "|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_"..Unit.Icon..":12:12|t" or "")..Unit.Name)
@@ -419,17 +418,17 @@ function MPR_Timers:Update()
                 Color = {R = 1, G = 0, B = 0}
             end
         end
-        
+
         self:SetHeight(69)
         MPR_Timers.Label3:Show()
     else
         self.GrabbedPlayers = {}
         self.ValkyrTable = {}
-        
+
         self:SetHeight(56)
         MPR_Timers.Label3:Hide()
     end
-    
+
     self.Label3:SetTextColor(Color.R, Color.G, Color.B)
     self.Label3:SetText("Grabbed: "..table.concat(arrayGrabbed,", "))
 end
@@ -526,7 +525,7 @@ end
 function MPR_Timers:BoneStorm()
     --local cd = round(self.DataTimers[1][2],1,true)
     --if cd > 0 then self:NewTimer(GetSpellLink(self:GetSpellID("Bone Storm")),cd,nil) end
-    if self:IsNormal() then  
+    if self:IsNormal() then
         self.DataTimers[1][1] = self:Is10Man() and 35 or 45
     end
     self.DataTimers[1][2] = 90
@@ -705,7 +704,7 @@ function MPR_Timers:RemorselessWinter()
     self.DataTimers[12][1] = nil
     self.DataTimers[12][2] = nil
     self.DataTimers[12][3] = nil
-    
+
     self.DataTimers[12][5] = self.QuakeCount == 0 and 3 or 5
     self.DataTimers[12][6] = 60
 end
@@ -718,15 +717,15 @@ function MPR_Timers:Quake()
     --local cd = round(self.DataTimers[12][5],1,true)
     --if cd > 0 then self:NewTimer(GetSpellLink(self:GetSpellID("Quake")),cd,"Quake #"..(self.QuakeCount+1)) end
     self.DataTimers[12][5] = nil
-    
+
     self.QuakeCount = self.QuakeCount + 1
     self.DataTimers[12][2] = self.QuakeCount == 1 and 26 or nil
     self.DataTimers[12][3] = self.QuakeCount == 1 and 44 or 32
     self.DataTimers[12][4] = self.QuakeCount == 2 and 20 or nil
-    
+
     self.DataTimers[12][5] = nil
     self.DataTimers[12][6] = nil
-    
+
     self.Label2:Show() -- Show Defile label
 end
 function MPR_Timers:FuryOfFrostmourne()
@@ -795,7 +794,7 @@ end
 function MPR_Timers:Reset()
     self.BossNum = nil
     MPR_Timers.Title2:SetText("|cFF00CCFF"..MPR.BossData[MPR_Timers.BossNum or 0]["ENCOUNTER"])
-    
+
     for e,_ in pairs(MPR_Timers.DataTimers) do
         for i,_ in pairs(MPR_Timers.DataTimers[e]) do
             MPR_Timers.DataTimers[e][i] = nil
@@ -817,12 +816,12 @@ MPR_Timers_Updater:SetScript("OnUpdate", function(self, elapsed)
         MPR_Timers:SetHeight(43)
         return
     end
-    
+
     MPR_Timers_Updater.LastUpdate = MPR_Timers_Updater.LastUpdate + elapsed
     if MPR_Timers_Updater.LastUpdate < MPR_Timers_Updater.Interval then return end
     local diff = MPR_Timers_Updater.LastUpdate
     MPR_Timers_Updater.LastUpdate = 0
-    
+
     local e = MPR_Timers.BossNum
     if e then
         MPR_Timers.DataTimers[e] = MPR_Timers.DataTimers[e] or {}
@@ -831,8 +830,8 @@ MPR_Timers_Updater:SetScript("OnUpdate", function(self, elapsed)
                 if MPR_Timers.DataTimers[e][i] then
                     if MPR_Timers.DataTimers[e][i] and MPR_Timers.DataTimers[e][i] > 0 then
                         MPR_Timers.DataTimers[e][i] = MPR_Timers.DataTimers[e][i] - diff
-                        if MPR_Timers.DataTimers[e][i] < 0 then 
-                            MPR_Timers.DataTimers[e][i] = 0 
+                        if MPR_Timers.DataTimers[e][i] < 0 then
+                            MPR_Timers.DataTimers[e][i] = 0
                             if e == 2 and i == 1 then
                                 if MPR_Timers.LD_Phase == 2 and MPR_Timers:IsHeroic() and not MPR_Timers.AddsFound then
                                     if MPR_Timers:SearchForAdds() then
@@ -884,11 +883,11 @@ function MPR_Timers_Options:Initialize()
     self.CloseButton:SetPoint("TOPRIGHT", -8, -8)
     self.CloseButton:SetText("x")
     self.CloseButton:SetScript("OnClick", function(self) MPR_Timers_Options:Hide() end)
-    
+
     self:NewFS("Timer announcing:","FFFFFF",10,-16, 10)
     self:NewCB("Self", "1E90FF", 105, -12, "T_SELF") -- [ ] Self
     self:NewCB("Raid", "EE7600", 145, -12, "T_RAID") -- [ ] Raid
-    
+
     --[[ Lord Marrowgar ]]--
     self:NewFS("Lord Marrowgar","00CCFF",10,-30,10)
     self:NewFS("{Bone Spike Graveyard}:","FFFFFF",14,-42,9)
@@ -898,7 +897,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 107, -50, "1:2:10")
     self:NewCB("5s", "FFFFFF", 144, -50, "1:2:5")
     self:NewCB("5s", "FFFFFF", 176, -50, "1:2:5")
-    
+
     --[[ Lady Deathwhisper ]]--
     self:NewFS("Lady Deathwhisper","00CCFF",10,-68,10)
     self:NewFS("Summon Adds:","FFFFFF",14,-80,9)
@@ -909,21 +908,21 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 107, -88, "2:2:10")
     self:NewCB("5s", "FFFFFF", 144, -88, "2:2:5")
     self:NewCB("3s", "FFFFFF", 176, -88, "2:2:3")
-    
+
     --[[ Gunship Battle ]]--
     self:NewFS("Gunship Battle","00CCFF",10,-108,10)
     self:NewFS("{Below Zero}:","FFFFFF",14,-120,9)
     self:NewCB("10s", "FFFFFF", 107, -116, "3:1:10")
     self:NewCB("5s", "FFFFFF", 144, -116, "3:1:5")
     self:NewCB("3s", "FFFFFF", 176, -116, "3:1:3")
-    
+
     --[[ Deathbringer Saurfang ]]--
     self:NewFS("Deathbringer Saurfang","00CCFF",10,-136,10)
     self:NewFS("{Rune of Blood}:","FFFFFF",14,-148,9)
     self:NewCB("10s", "FFFFFF", 107, -144, "4:1:10")
     self:NewCB("5s", "FFFFFF", 144, -144, "4:1:5")
     self:NewCB("3s", "FFFFFF", 176, -144, "4:1:3")
-    
+
     --[[ Festergut ]]--
     self:NewFS("Festergut","00CCFF",10,-166,10)
     self:NewFS("{Gas Spore}:","FFFFFF",14,-178,9)
@@ -934,7 +933,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 107, -186, "5:2:10")
     self:NewCB("5s", "FFFFFF", 144, -186, "5:2:5")
     self:NewCB("3s", "FFFFFF", 176, -186, "5:2:3")
-    
+
     --[[ Rotface ]]--
     self:NewFS("Rotface","00CCFF",10,-206,10)
     self:NewFS("{Slime Spray}:","FFFFFF",14,-218,9)
@@ -948,7 +947,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 107, -238, "6:2:10")
     self:NewCB("5s", "FFFFFF", 144, -238, "6:2:5")
     self:NewCB("3s", "FFFFFF", 176, -238, "6:2:3")
-    
+
     --[[ Professor Putricide ]]--
     self:NewFS("Professor Putricide","00CCFF",10,-258,10)
     self:NewFS("{Unstable Experiment}:","FFFFFF",14,-270,9)
@@ -962,7 +961,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 119, -290, "7:2:10:2")
     self:NewCB("5s", "FFFFFF", 153, -290, "7:2:5:2")
     self:NewCB("3s", "FFFFFF", 182, -290, "7:2:3:2")
-    
+
     --[[ Blood Prince Council ]]--
     self:NewFS("Blood Prince Council","00CCFF", 210,-30,10)
     self:NewFS("Target Switch:","FFFFFF",214,-42,9)
@@ -972,7 +971,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("5s", "FFFFFF", 376, -50, "8:2:5")
     self:NewFS("{Shadow Resonance}:","FFFFFF", 214,-66,9)
     self:NewCB("5s", "FFFFFF", 376, -62, "8:2:5")
-    
+
     --[[ Blood Queen Lana'thel ]]--
     self:NewFS("Blood Queen Lana'thel","00CCFF",210,-82,10)
     self:NewFS("{Incite Terror}:","FFFFFF",214,-94,9)
@@ -987,13 +986,13 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("30s", "FFFFFF", 300, -114, "9:3:10:8")
     self:NewCB("20s", "FFFFFF", 338, -114, "9:3:5:8")
     self:NewCB("10s", "FFFFFF", 376, -114, "9:3:3:8")
-      
+
     --[[ Valithria Dreamwalker ]]--
     self:NewFS("Valithria Dreamwalker","00CCFF",210,-134,10)
     self:NewFS("{Summon Portal}:","FFFFFF",214,-146,9)
     self:NewCB("10s", "FFFFFF", 338, -142, "10:1:10:3")
     self:NewCB("5s", "FFFFFF", 376, -142, "10:1:5:3")
-    
+
     --[[ Sindragosa ]]--
     self:NewFS("Sindragosa","00CCFF",210,-162,10)
     self:NewFS("{Blistering Cold}:","FFFFFF",214,-174,9)
@@ -1040,7 +1039,7 @@ function MPR_Timers_Options:Initialize()
     self:NewCB("10s", "FFFFFF", 306, -294, "12:7:10:4")
     self:NewCB("5s", "FFFFFF", 344, -294, "12:7:5:4")
     self:NewCB("3s", "FFFFFF", 376, -294, "12:7:3:4")
-        
+
     --[[ Gormok the Impaler ]]--
     self:NewFS("Gormok the Impaler","3CAA50",410,-30,10)
     self:NewFS("{Impale}:","FFFFFF",414,-42,9)
@@ -1053,14 +1052,14 @@ function MPR_Timers_Options:Initialize()
     self:NewFS("{Rising Anger}:","FFFFFF",414,-66,9)
     self:NewCB("5s", "FFFFFF", 530, -62, "13:1:5")
     self:NewCB("3s", "FFFFFF", 560, -62, "13:1:3")
-    
+
     --[[ Acidmaw & Dreadscale ]]--
     self:NewFS("Acidmaw & Dreadscale","3CAA50",410,-82,10)
     self:NewFS("{Slime Pool}:","FFFFFF",414,-94,9)
     self:NewCB("10s", "FFFFFF", 490, -90, "14:1:10")
     self:NewCB("5s", "FFFFFF", 530, -90, "14:1:5")
     self:NewCB("3s", "FFFFFF", 560, -90, "14:1:3")
-    
+
     --[[ Saviana Ragefire ]]--
     self:NewFS("Saviana Ragefire","FF9912",410,-110,10)
     self:NewFS("{Enrage}:","FFFFFF",414,-122,9)
@@ -1069,7 +1068,7 @@ function MPR_Timers_Options:Initialize()
     self:NewFS("Air Phase:","FFFFFF",414,-134,9)
     self:NewCB("10s", "FFFFFF", 520, -130, "20:2:10")
     self:NewCB("5s", "FFFFFF", 560, -130, "20:2:5")
-    
+
     --[[ General Ragefire ]]--
     self:NewFS("Saviana Ragefire","FF9912",410,-110,10)
     self:NewFS("{Enrage}:","FFFFFF",414,-122,9)
@@ -1078,7 +1077,7 @@ function MPR_Timers_Options:Initialize()
     self:NewFS("Air Phase:","FFFFFF",414,-134,9)
     self:NewCB("10s", "FFFFFF", 520, -130, "20:2:10")
     self:NewCB("5s", "FFFFFF", 560, -130, "20:2:5")
-    
+
     --[[ Halion ]]--
     self:NewFS("Halion","FF9912",410,-150,10)
     self:NewFS("{Meteor Strike}:","FFFFFF",414,-162,9)
@@ -1126,7 +1125,7 @@ function MPR_Timers_Options:NewCB(Text,Color,LocX,LocY,Var) -- Creates a checkbo
     _G["CheckBox"..GetCurrentID().."Text"]:SetText(Text)
 
     if type(Color) ~= "string" then Color = "FFFFFF" end
-    
+
     if not Var or Var == "nil" then
         CheckBox:Disable()
     elseif not Var:find(":") then

@@ -56,16 +56,25 @@ function MPR_Options:Initialize()
     MPR_Options:NewCB("Say",     "FFFFFF",    "SAY",100,genLine1_posY)        -- [ ] Say
     MPR_Options:NewCB("Whisper", "DA70D6",    "WHISPER",140,genLine1_posY)    -- [ ] Whisper
 
-    -- Reporting
+    --[[ Reporting ]]--
     local reporting_posY = general_posY-34
     local repLine1_posY = reporting_posY-line1_offsetY
     local repLine2_posY = reporting_posY-line2_offsetY
     local repLine3_posY = reporting_posY-line3_offsetY
     MPR_Options:NewFS("Reporting","20B2AA",16,reporting_posY)
     MPR_Options:NewCB("Dispels",nil,"REPORT_DISPELS",16,repLine1_posY)                              -- [ ] Dispels
-    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",90,repLine1_posY)                     -- [ ] Mass Dispels
-    MPR_Options:NewCB("Parry Haste (Sindra & Halion)",nil,"REPORT_PARRYHASTE",16,repLine2_posY)     -- [ ] Parry Haste
-    MPR_Options:NewCB("Tank Cooldowns",nil,"REPORT_TANKCDS",16,repLine3_posY)                       -- [ ] Tank Cooldowns
+    MPR_Options:NewCB("Mass Dispels",nil,"REPORT_MASSDISPELS",100,repLine1_posY)                    -- [ ] Mass Dispels
+    local ParryHasteCB = MPR_Options:NewCB("Parry Haste",nil,"REPORT_PARRYHASTE",16,repLine2_posY)    -- [ ] Parry Haste
+    ParryHasteCB:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(ParryHasteCB, "Only enabled on Sindragosa and Halion") end)
+    ParryHasteCB:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+    local TankCDsCB = MPR_Options:NewCB("Tank Cooldowns",nil,"REPORT_TANKCDS",100,repLine2_posY)      -- [ ] Tank Cooldowns
+    local TankCDsTable = concatTables(tankCooldownsCast, tankAurasApplied)
+    TankCDsCB:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(TankCDsCB, TankCDsTable, "Spells:") end)
+    TankCDsCB:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+    local OtherSpellsCB = MPR_Options:NewCB("Offensives & Other Spells",nil,"REPORT_OTHERSPELLS",16,repLine3_posY)  -- [ ] Offensives & Other Spells
+    local OtherSpellsTable = concatTables(otherSpellsCast, otherSpellsCastOnTarget)
+    OtherSpellsCB:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(OtherSpellsCB, OtherSpellsTable, "Spells:") end)
+    OtherSpellsCB:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 
     MPR_Options:NewFS("Ignore Dispel List","990099",16,repLine3_posY-19)
     BtnToggleIgnoreDispels = CreateFrame("button","BtnToggleIgnoreDispels", MPR_Options, "UIPanelButtonTemplate")
@@ -85,7 +94,7 @@ function MPR_Options:Initialize()
         end
     end)
 
-    -- Reporting in
+    --[[ Reporting in ]]--
     local reporting_in_posY = reporting_posY-79
     local reporting_in_line1_posY = reporting_in_posY-line1_offsetY
     local reporting_in_line2_posY = reporting_in_posY-line2_offsetY
@@ -136,7 +145,7 @@ function MPR_Options:Initialize()
         MPR.Settings["UPDATEFREQUENCY"] = round(MPR_Slider:GetValue(),1)
     end)
 
-    -- Timers
+    --[[ Timers ]]--
     local timers_posY = aura_info_posY-50
     MPR_Options:NewFS("Timers","1E90FF",16,timers_posY)
     MPR_Options:NewCB("Enable","FFFFFF","TIMERS",64,timers_posY+2)
@@ -151,7 +160,7 @@ function MPR_Options:Initialize()
         BtnToggleTimers:SetText(MPR_Timers:IsVisible() and "Hide" or "Show")
     end)
 
-    -- Player Deaths
+    --[[ Player Deaths ]]--
     local player_deaths_posY = timers_posY-20
     MPR_Options:NewFS("Player Deaths","22FF00",16,player_deaths_posY)
     MPR_Options:NewCB("Enable",  "FFFFFF",    "PD_REPORT",104,player_deaths_posY+2)        -- [ ] Enable
@@ -161,7 +170,7 @@ function MPR_Options:Initialize()
     MPR_Options:NewCB("Whisper", "DA70D6",    "PD_WHISPER",100,player_deaths_line1_posY)   -- [ ] Whisper
     MPR_Options:NewCB("Guild",   "40FF40",    "PD_GUILD",160,player_deaths_line1_posY)     -- [ ] Guild
 
-    -- Report Deaths
+    --[[ Report Deaths ]]--
     local report_deaths_posY = player_deaths_posY-36
     MPR_Options:NewFS("Report Deaths","FFAA00",16,report_deaths_posY)
     MPR_Options:NewCB("Enable logging","FFFFFF","PD_LOG",108,report_deaths_posY+2)         -- [ ] Enable logging
@@ -267,17 +276,21 @@ function MPR_Options:Initialize()
 
     --[[ Miscellaneous ]]--
     MPR_Options:NewFS("Miscellaneous","00CCFF",216,general_posY)
-    MPR_Options:NewCB("Automatic combat log clear",nil,"CCL_ONLOAD",214,general_posY-line1_offsetY)    -- [ ] ClearEntriesOnLoad
-    MPR_Options:NewCB("Spell Icons (|r\124T"..select(3, GetSpellInfo(33054))..":12:12:0:0:64:64:5:59:5:59\124t "..GetSpellLink(33054)..")",nil,"ICONS",214,general_posY-line2_offsetY) -- [ ] Spell Icons
+    MPR_Options:NewCB("Automatic combat log clear",nil,"CCL_ONLOAD",214,general_posY-line1_offsetY)             -- [ ] ClearEntriesOnLoad
+    local SpellIconsCB = MPR_Options:NewCB("Spell Icons (|r\124T"..select(3, GetSpellInfo(33054))..":12:12:0:0:64:64:5:59:5:59\124t "..GetSpellLink(33054)..")",nil,"ICONS",214,general_posY-line2_offsetY)  -- [ ] Spell Icons
+    local SpellIconsInfo = {"Spell icons will only show up in your own chat when self-reporting,\nthey will not show up in public chat channels."}
+    SpellIconsCB:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(SpellIconsCB, SpellIconsInfo) end)
+    SpellIconsCB:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 
-    -- Masterloot
+
+    --[[ Masterloot ]]--
     local ml_posY = general_posY-48
     MPR_Options:NewFS("Masterloot","3CB371",216,ml_posY)
     MPR_Options:NewCB("Report |cFFB048F8epic|r items in loot",nil,"REPORT_LOOT", 214, ml_posY-line1_offsetY)    -- [ ] ReportLoot
     MPR_Options:NewCB("Only when BoP in loot",nil,"nil", 234, ml_posY-line2_offsetY)                            -- [ ] ReportOnlyWhenBOP    REPORT_LOOT_BOP_ONLY
     MPR_Options:NewCB("Add BiS information",nil,"REPORT_LOOT_BIS_INFO", 234, ml_posY-line3_offsetY)             -- [ ] AddClassBISinfo
 
-    -- Window Style
+    --[[ Window Style ]]--
     local window_style_posY = ml_posY-62
     MPR_Options:NewFS("Window Style","FF9912",216,window_style_posY)
     MPR_Options:NewFS("Border Color:","FFFFFF",218,window_style_posY-line1_offsetY-2)
@@ -417,7 +430,7 @@ function MPR_Options:Initialize()
         MPR:UpdateBackdrop()
     end)
 
-    -- Opacity slider --
+    -- Opacity Slider
     local opacity_posY = window_style_posY-77
     local OpacityValue = MPR.Settings["BACKDROPCOLOR"][4]*100
     MPR_OpacitySlider = CreateFrame("Slider", "MPR_OpacitySlider", MPR_Options, "OptionsSliderTemplate")
@@ -437,7 +450,7 @@ function MPR_Options:Initialize()
         MPR:UpdateBackdrop()
     end)
 
-    -- Killing Blow
+    --[[ Killing Blow ]]--
     local kb_posY = opacity_posY-33
     MPR_Options:NewFS("Killing Blow","990099",216,kb_posY)
     MPR_Options:NewCB("Enable","FFFFFF","KILLINGBLOW",298,kb_posY+2)
@@ -454,14 +467,14 @@ function MPR_Options:Initialize()
     Button:SetPoint("TOPLEFT", 340, kb_posY-line2_offsetY)
     Button:SetText("Test")
     Button:SetScript("OnClick", function(self)
-        MPR:SelfReport(MPR:FormatKillingBlow("Herbalist","Squirrel",GetSpellLink(49238),8,21350,true))
+        MPR:SelfReport(MPR:FormatKillingBlow("TestPlayer","Squirrel",GetSpellLink(49238),8,21350,true))
     end)
 
-    --Report Prefix Text
+    --[[ Chat Prefix ]]--
     local prefix_posY = kb_posY-65
     local prefix_value = MPR.Settings["PREFIX_VALUE"]
-    MPR_Options:NewFS("Report Prefix", "1E90FF", 216, prefix_posY)
-    MPR_Options:NewFS("(max. 10 characters)","FFFFFF",300,prefix_posY-3,9)
+    MPR_Options:NewFS("Chat Prefix", "1E90FF", 216, prefix_posY)
+    MPR_Options:NewFS("(max. 10 characters)","FFFFFF",290,prefix_posY-3,9)
     MPR_Options.EB_PREFIX = CreateFrame("EditBox", "EditBox", MPR_Options, "InputBoxTemplate")
     MPR_Options.EB_PREFIX:SetText(prefix_value)
     MPR_Options.EB_PREFIX:SetPoint("TOPLEFT", 223, prefix_posY-16)
@@ -469,6 +482,9 @@ function MPR_Options:Initialize()
     MPR_Options.EB_PREFIX:SetHeight(18)
     MPR_Options.EB_PREFIX:SetWidth(60)
     MPR_Options.EB_PREFIX:SetMaxLetters(10)
+    local ChatSymbols = {"{star}", "{skull}", "{cross}", "{circle}", "{moon}", "{diamond}", "{square}", "{triangle}"}
+    MPR_Options.EB_PREFIX:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(MPR_Options.EB_PREFIX, ChatSymbols, "E.g. Symbols:") end)
+    MPR_Options.EB_PREFIX:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
     MPR_Options.BTN_SAVE_PREFIX = CreateFrame("button","BtnSavePrefix", MPR_Options, "UIPanelButtonTemplate")
     MPR_Options.BTN_SAVE_PREFIX:SetHeight(18)
     MPR_Options.BTN_SAVE_PREFIX:SetWidth(60)
@@ -556,6 +572,8 @@ function MPR_Options:NewFS(Text,Color,LocX,LocY,Size) -- Creates a fontstring
     Title:SetTextColor(tonumber(Color:sub(1,2),16)/255, tonumber(Color:sub(3,4),16)/255, tonumber(Color:sub(5,6),16)/255)
     Title:SetFont("Fonts\\FRIZQT__.TTF", Size or 12, "OUTLINE")
     Title:SetText(Text)
+
+    return Title
 end
 
 function MPR_Options:NewCB(Text,Color,Var,LocX,LocY) -- Creates a checkbox
@@ -578,4 +596,30 @@ function MPR_Options:NewCB(Text,Color,Var,LocX,LocY) -- Creates a checkbox
     else
         CheckBox:Disable()
     end
+    return CheckBox
+end
+
+function MPR_Options:ShowGameTooltip(owner, content, text)
+    GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT", 10, -5)
+    if text then
+        GameTooltip:SetText(text);
+    end
+    if type(content) == "table" then
+        for i=1, #content do
+            GameTooltip:AddLine(content[i],1,1,1)
+        end
+    else
+        GameTooltip:AddLine(content,1,1,1,1)
+    end
+    GameTooltip:Show()
+end
+
+function concatTables(t, ...)
+    local new = {unpack(t)}
+    for i,v in ipairs({...}) do
+        for j,w in ipairs(v) do
+            new[#new+1] = w
+        end
+    end
+    return new
 end

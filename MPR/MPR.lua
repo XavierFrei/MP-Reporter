@@ -1,6 +1,6 @@
 MPR = CreateFrame("frame","MPRFrame")
-MPR.Version = "v2.95"
-MPR.VersionNotes = {"Added: Help Command", "Added: Optional Tank Cooldowns setting", "Fixed: Some SpellCreate timers"}
+MPR.Version = "v2.96"
+MPR.VersionNotes = {"Added Offensives and Other Spells setting", "Added some tooltips in the options", "Fixed some smaller issues"}
 local ClassColors = {["DEATHKNIGHT"] = "C41F3B", ["DEATH KNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA",
     ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
 local InstanceShortNames = {["Icecrown Citadel"] = "ICC", ["Vault of Archavon"] = "VOA", ["Trial of the Crusader"] = "TOC", ["Naxxramas"] = "NAXX", ["The Ruby Sanctum"] = "RS"}
@@ -256,16 +256,18 @@ local npcBossSpellSummon = {"Vengeful Shade"} -- Boss summons, destination is un
 --| Output: Unit casts [Spell]. |--
 local spellsCast = {"Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Mana Tide Totem", 69381}
 -- [69381] = Drums: Gift of the Wilds
-local tankCooldownsCast = {"Divine Protection", "Icebound Fortitude", "Vampiric Blood", "Anti-Magic Shell", "Barkskin", "Survival Instincts", "Frenzied Regeneration", "Shield Wall", "Last Stand"}
+tankCooldownsCast = {"Divine Protection", "Icebound Fortitude", "Vampiric Blood", "Anti-Magic Shell", "Anti-Magic Zone", "Barkskin", "Survival Instincts", "Frenzied Regeneration", "Shield Wall", "Last Stand"}
+otherSpellsCast = {"Soulshatter", "Invisibility", "Ice Block", "Hymn of Hope", "Psychic Scream", "Dispersion", "Army of the Dead", "Holy Wrath", "Cloak of Shadows", "Shockwave", "Deterrence"}
 local npcSpellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex"}
 --| Output: Unit casts [Spell] on Target. |--
 local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
 --| Output: [Spell] on Target. |--
 local spellsBossCastOnTarget = {"Rune of Blood", "Vile Gas", "Swarming Shadows", "Necrotic Plague", "Soul Reaper"} -- If sourceName isn't important (ex. Boss casting).
+otherSpellsCastOnTarget = {"Power Infusion", "Hysteria", "Fear Ward", "Banish", "Bash", "Hammer of Justice", "Concussion Blow", "Tranquilizing Shot"}
 
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
-local aurasApplied = {"Eyes of Twilight" }
-local tankAurasApplied = {"Aegis of Dalaran", "Ardent Defender", "Enraged Defense"}
+local aurasApplied = {"Eyes of Twilight"}
+tankAurasApplied = {"Aegis of Dalaran", "Ardent Defender", "Enraged Defense"}
 --| Output: [Spell] applied on Target. |--
 --| Filter: UnitIsPlayer(Target)
 local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion", "Soulstone Resurrection"}
@@ -279,17 +281,18 @@ local sayAuraOnMe = {
     ["Gaseous Bloat"] = "Orange on me!",
     ["Essence of the Blood Queen"] = "I was biten!",
     ["Frenzied Bloodthirst"] = "I have to bite!!",
-    ["Frost Beacon"] = "Frost Beacon on me!",
+    ["Frost Beacon"] = "Frost Beacon on me!"
 }
 local paladinAuras = {
-    ["Devotion Aura"] = true,
-    ["Retribution Aura"] = true,
-    ["Concentration Aura"] = true,
-    ["Shadow Resistance Aura"] = true,
-    ["Frost Resistance Aura"] = true,
-    ["Fire Resistance"] = true,
-    ["Crusader Aura"] = true,
+    "Devotion Aura",
+    "Retribution Aura",
+    "Concentration Aura",
+    "Shadow Resistance Aura",
+    "Frost Resistance Aura",
+    "Fire Resistance",
+    "Crusader Aura"
 }
+
 --| Output: Target has Amount stacks of [Spell]. |--
 local stackAppliedOnTarget = {"Instability", "Cleave Armor"}
 --| Output: Player steals [Spell] from Target. |--
@@ -1194,6 +1197,16 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
 
+            if spellName == "Necrotic Plague" then
+                self:Whisper(destName, GetSpellLink(spellId).." on you! Run to a Shambling Horror!!")
+            elseif sourceName == "Shadow Trap" and spellName == "Shadow Trap" then
+                self:RaidReport(GetSpellLink(spellId)) --self:RaidReport("{rt8}{rt8}{rt8} "..GetSpellLink(spellId).." summoned! {rt8}{rt8}{rt8}")
+            elseif spellName == "Swarming Shadows" then
+                self:Whisper(destName, GetSpellLink(spellId).." on you! Run along walls!!")
+            elseif spellId == 74502 then
+                self:Whisper(destName, GetSpellLink(spellId).." on you! Run away!!")
+            end
+
             if UnitInRaid(sourceName) or UnitInParty(sourceName) then
                 if (spellName == "Heroism" or spellName == "Bloodlust") then
                     table.wipe(targetsHeroism)
@@ -1202,7 +1215,7 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                     self:ScheduleTimer("Heroism/BL", TimerHandler, 1, spellId)
                 elseif contains(spellsCast,spellName) or contains(spellsCast,spellId) then
                     if(spellName == "Aura Mastery") then
-                        for aura in pairs(paladinAuras) do
+                        for _,aura in ipairs(paladinAuras) do
                             for i=1,GetNumGroupMembers() do
                                 if UnitBuff("raid"..i, aura) then
                                     local caster = select(8, UnitBuff("raid"..i, aura))
@@ -1217,7 +1230,11 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                     end
                 elseif self.Settings["REPORT_TANKCDS"] and contains(tankCooldownsCast,spellName) then
                     self:ReportCast(sourceName,spellId)
+                elseif self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCast,spellName) then
+                    self:ReportCast(sourceName,spellId)
                 elseif contains(spellsCastOnTarget,spellName) then
+                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                elseif self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCastOnTarget,spellName) then
                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                 end
             elseif contains(spellsBossCastOnTarget,spellName) then
@@ -1226,20 +1243,15 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 self:ReportCast(sourceName,spellId)
             end
 
-            if spellName == "Necrotic Plague" then
-                self:Whisper(destName, GetSpellLink(spellId).." on you! Run to a Shambling Horror!!")
-            elseif sourceName == "Shadow Trap" and spellName == "Shadow Trap" then
-                self:RaidReport(GetSpellLink(spellId)) --self:RaidReport("{rt8}{rt8}{rt8} "..GetSpellLink(spellId).." summoned! {rt8}{rt8}{rt8}")
-            elseif spellName == "Swarming Shadows" then
-                self:Whisper(destName, GetSpellLink(spellId).." on you! Run along walls!!")
-            elseif spellId == 74502 then
-                self:Whisper(destName, GetSpellLink(spellId).." on you! Run away!!")
-            end
         elseif event == "SPELL_CREATE" then
-            if contains(spellsCreate,destName,true) then
-                self:ReportSpellCreate(sourceName,spellId)
-                self:CancelTimer(destName)
-                self:ScheduleTimer(destName, TimerHandler, spellsCreate[destName]-30, spellId)
+            if UnitInRaid(sourceName) or UnitInParty(sourceName) then
+                if spellId ~= 61993 then  -- Filtering out the second 'Ritual of Summoning' event
+                    if contains(spellsCreate,destName,true) then
+                        self:ReportSpellCreate(sourceName,spellId)
+                        self:CancelTimer(destName)
+                        self:ScheduleTimer(destName, TimerHandler, spellsCreate[destName]-30, spellId)
+                    end
+                end
             end
         elseif event == "SPELL_SUMMON" then
             if spellId == 69037 or spellId == 71844 then -- Summon Val'kyr
@@ -1369,29 +1381,33 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 end
             end
 
-            if contains(aurasApplied,spellName) then
-                if spellId == 75490 then -- [Eyes of Twilight]
-                    local itemID = 54573 -- [Glowing Twilight Scale] (271)
-                    self:ReportItemUsed(sourceName,itemID)
-                elseif spellId == 75495 then -- [Eyes of Twilight]
-                    local itemID = 54589 -- [Glowing Twilight Scale] (284)
-                    self:ReportItemUsed(sourceName,itemID)
-                else
-                    self:ReportApplied(sourceName,spellId)
+            if UnitInRaid(sourceName) or UnitInParty(sourceName) then
+                if contains(aurasApplied,spellName) then
+                    if spellId == 75490 then -- [Eyes of Twilight]
+                        local itemID = 54573 -- [Glowing Twilight Scale] (271)
+                        self:ReportItemUsed(sourceName,itemID)
+                    elseif spellId == 75495 then -- [Eyes of Twilight]
+                        local itemID = 54589 -- [Glowing Twilight Scale] (284)
+                        self:ReportItemUsed(sourceName,itemID)
+                    else
+                        self:ReportApplied(sourceName,spellId)
+                    end
+                elseif contains(tankAurasApplied,spellName) and self.Settings["REPORT_TANKCDS"] then
+                    if spellId == 71635 then -- [Aegis of Dalaran]
+                        local itemID = 50361 -- [Sindragosa's Flawless Fang] (264)
+                        self:ReportItemUsed(sourceName,itemID)
+                    elseif spellId == 71638 then -- [Aegis of Dalaran]
+                        local itemID = 50364 -- [Sindragosa's Flawless Fang] (277)
+                        self:ReportItemUsed(sourceName,itemID)
+                    elseif spellName == "Ardent Defender" then
+                        self:ReportProcced(sourceName,spellId)
+                    else
+                        self:ReportApplied(sourceName,spellId)
+                    end
                 end
-            elseif contains(tankAurasApplied,spellName) and self.Settings["REPORT_TANKCDS"] then
-                if spellId == 71635 then -- [Aegis of Dalaran]
-                    local itemID = 50361 -- [Sindragosa's Flawless Fang] (264)
-                    self:ReportItemUsed(sourceName,itemID)
-                elseif spellId == 71638 then -- [Aegis of Dalaran]
-                    local itemID = 50364 -- [Sindragosa's Flawless Fang] (277)
-                    self:ReportItemUsed(sourceName,itemID)
-                elseif spellName == "Ardent Defender" then
-                    self:ReportProcced(sourceName,spellId)
-                else
-                    self:ReportApplied(sourceName,spellId)
-                end
-            elseif contains(aurasAppliedOnTarget,spellName) and UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
+            end
+
+            if contains(aurasAppliedOnTarget,spellName) and UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
                 self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
             elseif contains(aurasAppliedOnTarget,spellName) and not UnitIsPlayer(sourceName) and UnitIsPlayer(destName) then
                 if destName == UnitName("player") and contains(sayAuraOnMe,spellName) then
@@ -1533,7 +1549,7 @@ function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target.
     self:HandleReport(string.format("%s applied on %s",spell(SPELL,true),TARGET), string.format("%s applied on %s",spell(SPELL),unit(TARGET)))
 end
 function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item].
-    self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)), string.format("%s used %s",UNIT,item(ITEM)))
+    self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)), string.format("%s used %s",unit(UNIT),item(ITEM)))
 end
 function MPR:ReportApplied(UNIT,SPELL) -- Unit gains [Spell].
     self:HandleReport(string.format("%s gains %s",UNIT,spell(SPELL,true)), string.format("%s gains %s",unit(UNIT),spell(SPELL)))
@@ -1554,7 +1570,7 @@ end
 
 --[[ PARRY_HASTE ]]--
 function MPR:ReportParryHaste(UNIT,TARGET) -- Unit has caused a PARRY by Target.
-    self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET), string.format("%s has caused a PARRY by %s",UNIT,TARGET))
+    self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET), string.format("%s has caused a PARRY by %s",unit(UNIT),TARGET))
 end
 
 --[[ SPELL_CREATE ]]--
@@ -1758,7 +1774,7 @@ function MPR:CHAT_MSG_ADDON(prefix, msg, channel, sender)
             else
                 self:SelfReport("No version notes given in |r|cFF00FF00"..arg2.."|r|cFFBEBEBE.")
             end
-            self:SelfReport("|r|cFFFFFF00|HMPR:CopyUrl:https://github.com/Mihapro/MP-Reporter|h[Click here to get the latest version!]|h|r|cFFBEBEBE")
+            self:SelfReport("|r|cFFFFFF00|HMPR:CopyUrl:https://github.com/freix1/MP-Reporter|h[Click here to get the latest version!]|h|r|cFFBEBEBE")
         end
     end
 end
@@ -1797,6 +1813,7 @@ function MPR:ADDON_LOADED(addon)
     self:DefineSetting("REPORT_MASSDISPELS", false)
     self:DefineSetting("REPORT_PARRYHASTE", false)
     self:DefineSetting("REPORT_TANKCDS", false)
+    self:DefineSetting("REPORT_OTHERSPELLS", false)
     self:DefineSetting("PD_REPORT", true)
     self:DefineSetting("PD_SELF", true)
     self:DefineSetting("PD_RAID", false)
@@ -1877,8 +1894,10 @@ function MPR:ADDON_LOADED(addon)
 end
 
 function MPR:PLAYER_ENTERING_WORLD()
+    if IsInGuild() then
+        SendAddonMessage("MPR", "request-version", "GUILD")
+    end
     self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    SendAddonMessage("MPR", "request-version", "GUILD")
 end
 
 MPR:RegisterEvent("ADDON_LOADED")

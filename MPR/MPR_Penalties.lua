@@ -22,11 +22,11 @@ end
 function MPR_Penalties:Initialize()
     MPR_Penalties:Hide()
     MPR_Penalties.name = "MPR_Penalties"
-    
+
     MPR_Penalties:SetBackdrop(MPR.Settings["BACKDROP"])
     MPR_Penalties:SetBackdropColor(unpack(MPR.Settings["BACKDROPCOLOR"]))
     MPR_Penalties:SetBackdropBorderColor(MPR.Settings["BACKDROPBORDERCOLOR"].R/255, MPR.Settings["BACKDROPBORDERCOLOR"].G/255, MPR.Settings["BACKDROPBORDERCOLOR"].B/255)
-    
+
     MPR_Penalties:SetPoint("CENTER",UIParent)
     MPR_Penalties:SetWidth(564)
     MPR_Penalties:SetHeight(282)
@@ -42,37 +42,37 @@ function MPR_Penalties:Initialize()
     MPR_Penalties.Title = MPR_Penalties:CreateFontString("Title"..GetNewID(), "ARTWORK", "GameFontNormal")
     MPR_Penalties.Title:SetPoint("TOP", 0, -12)
     if type(Color) ~= "string" then Color = "FFFFFF" end
-    MPR_Penalties.Title:SetTextColor(tonumber(Color:sub(1,2),16)/255, tonumber(Color:sub(3,4),16)/255, tonumber(Color:sub(5,6),16)/255) 
+    MPR_Penalties.Title:SetTextColor(tonumber(Color:sub(1,2),16)/255, tonumber(Color:sub(3,4),16)/255, tonumber(Color:sub(5,6),16)/255)
     MPR_Penalties.Title:SetText("|cFF1E90FFMP Reporter|r - DKP Penalties (for QuickDKP)")
-    
+
     MPR_Penalties_BtnClose = CreateFrame("button","MPR_Penalties_BtnClose", MPR_Penalties, "UIPanelButtonTemplate")
     MPR_Penalties_BtnClose:SetHeight(14)
     MPR_Penalties_BtnClose:SetWidth(14)
     MPR_Penalties_BtnClose:SetPoint("TOPRIGHT", -12, -11)
     MPR_Penalties_BtnClose:SetText("x")
     MPR_Penalties_BtnClose:SetScript("OnClick", function(self) MPR_Penalties:Hide() end)
-    
+
     MPR_Penalties:NewSP("|cFF00C957[Ooze Explosion]|r","UOE",10,-30)
     MPR_Penalties:NewSP("|cFF00C957[Choking Gas Bomb]|r","CGB",100,-30,-6)
     MPR_Penalties:NewSP("|cFF00C957[Malleable Goo]|r","MG",200,-30)
     MPR_Penalties:NewSP("|cFF1C86EE[Blistering Cold]|r","BC",290,-30)
     MPR_Penalties:NewSP("|cFF1C86EE[Frost Bomb]|r","FB",380,-30,10)
     MPR_Penalties:NewSP("|cFFFFC125[Shadow Trap]|r","ST",470,-30,2)
-    
+
     MPR_Penalties:NewFS("|cFF00FF00Ignore:|r",nil,10,-76)
-    
+
     MPR_Penalties:NewCB("\124TInterface\\GroupFrame\\UI-Group-LeaderIcon:12:12:0:0:64:64:5:59:5:59\124tRL",nil,"PENALTIES_IGNORE_RL",50,-72)
     MPR_Penalties:NewCB("\124TInterface\\GroupFrame\\UI-Group-MainAssistIcon:12:12:0:0:64:64:5:59:5:59\124tRA",nil,"PENALTIES_IGNORE_RA",98,-72)
     MPR_Penalties:NewCB("\124TInterface\\RaidFrame\\UI-RaidFrame-MainTank:12:12:0:0:64:64:5:59:5:59\124tMT",nil,"PENALTIES_IGNORE_MT",146,-72)
     MPR_Penalties:NewCB("\124TInterface\\RaidFrame\\UI-RaidFrame-MainAssist:12:12:0:0:64:64:5:59:5:59\124tMA",nil,"PENALTIES_IGNORE_MA",194,-72)
-    
+
     MPR_Penalties:NewFS("Announce to:",nil,280,-76)
-    
+
     MPR_Penalties:NewCB("Self","1E90FF","PENALTIES_SELF",352,-72)
     MPR_Penalties:NewCB("Whisper","DA70D6","PENALTIES_WHISPER",390,-72)
     MPR_Penalties:NewCB("Raid","EE7600","PENALTIES_RAID",451,-72)
     MPR_Penalties:NewCB("Guild","40FF40","PENALTIES_GUILD",495,-72)
-    
+
     MPR_Penalties:NewFS("TIMESTAMP",9,10,-96)
     MPR_Penalties:NewFS("PLAYER",9,80,-96)
     MPR_Penalties:NewCB("main","FFFFFF","PENALTIES_LIST_SHOWMAIN",118,-90,"UPDATELIST")
@@ -85,7 +85,7 @@ function MPR_Penalties:Initialize()
     MPR_Penalties:NewCB("I","00FF00","PENALTIES_LIST_SHOWIGNORED",524,-90,"UPDATELIST")
     local LocY,FS1,FS2,FS3,FS4,BTN1,BTN2
     for i=0,9 do
-        LocY = -110-16*i 
+        LocY = -110-16*i
         FS1 = MPR_Penalties:NewFS("time1",nil,10,LocY)
         FS1:SetTextColor(1,1,1)
         FS2 = MPR_Penalties:NewFS("player1",nil,80,LocY)
@@ -97,7 +97,7 @@ function MPR_Penalties:Initialize()
         BTN2 = MPR_Penalties:NewBTN("Skip","SKIP_UNDO_"..i,36,520,LocY)
         MPR_Penalties.Rows[i] = {["Time"] = FS1,["Player"] = FS2,["Spell"] = FS3,["Status"] = FS4,["Deduct"] = BTN1,["Skip"] = BTN2}
     end
-    
+
     MPR_Penalties:RefreshList()
     MPR_Penalties:SetScript("OnUpdate", function(self, elapsed)
         if MPR_Penalties:IsVisible() then
@@ -118,7 +118,7 @@ function MPR_Penalties:RefreshList()
             end
         end
     end
-    
+
     local n = 0
     local i = #MPR.DataPenalties
     if i == 0 then
@@ -127,12 +127,12 @@ function MPR_Penalties:RefreshList()
         return
     end
     local Colors = {["DEATHKNIGHT"] = "C41F3B", ["DRUID"] = "FF7D0A", ["HUNTER"] = "ABD473", ["MAGE"] = "69CCF0", ["PALADIN"] = "F58CBA", ["PRIEST"] = "FFFFFF", ["ROGUE"] = "FFF569", ["SHAMAN"] = "0070DE", ["WARLOCK"] = "9482C9", ["WARRIOR"] = "C79C6E"}
-    
+
     while n < 10 do
         if i <= 0 then break end
         if MPR.DataPenalties[i] then
             local Penalty = MPR.DataPenalties[i]
-            
+
             -- Filter check
             if Penalty.Status == 0 and MPR.Settings["PENALTIES_LIST_SHOWPENDING"] or Penalty.Status == 1 and MPR.Settings["PENALTIES_LIST_SHOWDEDUCTED"] or Penalty.Status == 2 and MPR.Settings["PENALTIES_LIST_SHOWSKIPPED"] or Penalty.Status == 3 and MPR.Settings["PENALTIES_LIST_SHOWIGNORED"] then
                 -- Display
@@ -156,7 +156,7 @@ function MPR_Penalties:RefreshList()
                         break
                     end
                 end
-                
+
                 local AOText = Penalty.Overkill and Penalty.Overkill > 0 and "|cFFFF0000(Died!)|r" or ""
                 if MPR.Settings["PENALTIES_LIST_SHOWAMOUNTOVERKILL"] then
                     local A,O = Penalty.Amount, Penalty.Overkill and Penalty.Overkill > 0 and Penalty.Overkill or nil
@@ -289,10 +289,10 @@ function MPR_Penalties:NewNF(Var,LocX,LocY) -- Creates an numeric field
 
     local F_Amount = MPR_Penalties:CreateFontString(FN_Amount, "ARTWORK", "GameFontNormal")
     F_Amount:SetPoint("TOPRIGHT", FN_Less, "TOPLEFT", -2, 0)
-    F_Amount:SetTextColor(1,1,1) 
+    F_Amount:SetTextColor(1,1,1)
     F_Amount:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
     MPR_Penalties.Frames[FN_Amount] = F_Amount
-    
+
     local F_More = CreateFrame("button",FN_More, MPR_Penalties, "UIPanelButtonTemplate")
     F_More:SetHeight(14)
     F_More:SetWidth(14)
@@ -300,7 +300,7 @@ function MPR_Penalties:NewNF(Var,LocX,LocY) -- Creates an numeric field
     F_More:SetText("+")
     F_More:SetScript("OnClick", function(self) MPR_Penalties:NF_HandleOnClick(ID,Var,true) end)
     MPR_Penalties.Frames[FN_More] = F_More
-    
+
     MPR_Penalties:NF_UpdateButtons(ID,Var)
 end
 
@@ -312,7 +312,7 @@ function MPR_Penalties:NF_HandleOnClick(ID,Var,Increment)
         amount = amount - (amount > 200 and 50 or amount > 100 and 20 or amount > 50 and 10 or amount > 5 and 5 or amount > 0 and 1 or 0)
     end
     MPR.Settings[Var] = amount
-    
+
     MPR_Penalties:NF_UpdateButtons(ID,Var)
 end
 
@@ -403,13 +403,13 @@ function MPR_Penalties:DeductDKP(Name, Amount)
                 return Main.."'s officer note has strange DKP format."
             end
         end
-        
+
         local Net, Tot, Hrs = strsplit(" ", OfficerNote)
         local NetNum = select(2, strsplit(":", Net))
         NetNum = tonumber(NetNum) - Amount
-        
+
         GuildRosterSetOfficerNote(Index, "Net:"..NetNum.." "..Tot.." "..Hrs)
-        
+
         return NetNum
     end
     return Member.." not found in your guild."
@@ -444,7 +444,7 @@ function MPR_Penalties:AnnounceDeductions(Players,DKP,Spell,SpellID)
         for _, Player in pairs(Players) do
             table.insert(arrSelf, MPR:CS("|Hplayer:"..Player.Name.."|h["..Player.Name.."]|h",Colors[select(2,UnitClass(Player.Name))]).." ("..Player.Net..")")
         end
-        
+
         if MPR.Settings["PENALTIES_SELF"] then
             MPR:SelfReport(string.format("Deducted %i DKP from: %s. Reason: %s",DKP,table.concat(arrSelf,", "),Net,Reason))
         end
@@ -487,7 +487,7 @@ function MPR_Penalties:AnnounceUndoDeduct(Name,DKP,SpellID)
 end
 
 function MPR_Penalties:IsDKPFormat(Note)
-    if Note:sub(1,4) == "Net:" and Note:find("Tot:") and Note:find("Hrs:") then 
+    if Note:sub(1,4) == "Net:" and Note:find("Tot:") and Note:find("Hrs:") then
         return true
     end
 end

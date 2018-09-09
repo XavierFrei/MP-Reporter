@@ -6,7 +6,7 @@ MPR_AuraInfo.FrameNumbers = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,16,18,19,20,21,22,
 MPR_AuraInfo.FrameSize = nil
 MPR_AuraInfo.MaxFrameSize = nil
 MPR_AuraInfo.Strings = {
---  [i] = {FrameSize, Subtitle.text, Name1.text, Text1.fontsize, nNme2.text, Text2.fontsize, Name3.text, Text3.fontsize, Name4.text, Text4.fontsize},
+    --  [i] = {FrameSize, Subtitle.text, Name1.text, Text1.fontsize, nNme2.text, Text2.fontsize, Name3.text, Text3.fontsize, Name4.text, Text4.fontsize},
     [1] = {1, "ICC: Lord Marrowgar",        GetSpellLink(69065).." on: |cFFbebebe(health)|r", 16},
     [2] = {1, "ICC: Lady Deathwhisper",     GetSpellLink(71289).." on: |cFFbebebe(health)(expiration)|r", 16},
     [3] = {1, "ICC: Gunship Battle",        "Ships (Hit Points):", 16},
@@ -128,23 +128,23 @@ function MPR_AuraInfo:Initialize()
     MPR_AuraInfo:SetScript("OnDragStop", function(self) MPR_AuraInfo:StopMovingOrSizing() end)
     MPR_AuraInfo:SetScript("OnUpdate", function(self, elapsed) if MPR.Settings["AURAINFO"] and MPR_AuraInfo:IsVisible() then MPR_AuraInfo:OnUpdate(elapsed) end end)
     MPR_AuraInfo:SetFrameStrata("FULLSCREEN_DIALOG")
-    
+
     MPR_AuraInfo:SetWidth(270)
     MPR_AuraInfo:SetHeight(238) -- 114, 176, 238
-    
+
     MPR_AuraInfo.Title = MPR_AuraInfo:CreateFontString(nil, "OVERLAY", "GameTooltipText")
     MPR_AuraInfo.Title:SetPoint("TOP", 0, -8)
     MPR_AuraInfo.Title:SetTextColor(190/255, 190/255, 190/255)
     MPR_AuraInfo.Title:SetText("|cff"..MPR.Colors["TITLE"].."MP Reporter|r - Aura Info")
     MPR_AuraInfo.Title:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
     MPR_AuraInfo.Title:SetShadowOffset(1, -1)
-    
+
     Button1 = CreateFrame("button","BtnPrev", MPR_AuraInfo, "UIPanelButtonTemplate")
     Button1:SetHeight(14)
     Button1:SetWidth(14)
     Button1:SetPoint("TOPLEFT", 8, -8)
     Button1:SetText("<")
-    Button1:SetScript("OnShow", function(self) 
+    Button1:SetScript("OnShow", function(self)
         if MPR_AuraInfo.FrameNumber == 1 then
             Button1:Disable()
         end
@@ -157,7 +157,7 @@ function MPR_AuraInfo:Initialize()
         end
         Button2:Enable()
     end)
-    
+
     Button2 = CreateFrame("button","BtnNext", MPR_AuraInfo, "UIPanelButtonTemplate")
     Button2:SetHeight(14)
     Button2:SetWidth(14)
@@ -176,33 +176,33 @@ function MPR_AuraInfo:Initialize()
         end
         Button1:Enable()
     end)
-    
+
     Button3 = CreateFrame("button","BtnLess", MPR_AuraInfo, "UIPanelButtonTemplate")
     Button3:SetHeight(14)
     Button3:SetWidth(14)
     Button3:SetPoint("TOPLEFT", "BtnPrev", "TOPRIGHT", 2, 0)
     Button3:SetText("-")
     Button3:SetScript("OnClick", function(self) MPR_AuraInfo:UpdateFrameSize(false) end)
-    
+
     Button4 = CreateFrame("button","BtnMore", MPR_AuraInfo, "UIPanelButtonTemplate")
     Button4:SetHeight(14)
     Button4:SetWidth(14)
     Button4:SetPoint("TOPLEFT", "BtnLess", "TOPRIGHT", 1, 0)
     Button4:SetText("+")
     Button4:SetScript("OnClick", function(self) MPR_AuraInfo:UpdateFrameSize(true) end)
-    
+
     Button5 = CreateFrame("button","BtnClose", MPR_AuraInfo, "UIPanelButtonTemplate")
     Button5:SetHeight(14)
     Button5:SetWidth(14)
     Button5:SetPoint("TOPRIGHT", "BtnNext", "TOPLEFT", -2, 0)
     Button5:SetText("x")
     Button5:SetScript("OnClick", function(self) MPR_AuraInfo.FrameNumber = nil; MPR_AuraInfo:Hide(); BtnToggleAuraInfo:SetText("Show") end)
-    
+
     Subtitle = MPR_AuraInfo:CreateFontString("Subtitle", "OVERLAY", "GameTooltipText")
     Subtitle:SetPoint("TOPLEFT", 8, -22)
     Subtitle:SetTextColor(0/255, 204/255, 255/255)
     Subtitle:SetText("Instance: Boss")
-    
+
     -- 1 --
     -- Testing HTML Frame
     Name1 = CreateFrame("SimpleHTML", "Name1", MPR_AuraInfo);
@@ -214,7 +214,7 @@ function MPR_AuraInfo:Initialize()
     Name1:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Name1:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Name1:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     Text1 = CreateFrame("SimpleHTML", "Text1", MPR_AuraInfo);
     Text1:SetHeight(50)
     Text1:SetWidth(MPR_AuraInfo:GetWidth()-2*9)
@@ -226,7 +226,7 @@ function MPR_AuraInfo:Initialize()
     Text1:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Text1:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Text1:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     -- 2 --
     Name2 = CreateFrame("SimpleHTML", "Name2", MPR_AuraInfo);
     Name2:SetWidth(MPR_AuraInfo:GetWidth()-2*8)
@@ -237,7 +237,7 @@ function MPR_AuraInfo:Initialize()
     Name2:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Name2:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Name2:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     Text2 = CreateFrame("SimpleHTML", "Text2", MPR_AuraInfo);
     Text2:SetHeight(50)
     Text2:SetWidth(MPR_AuraInfo:GetWidth()-2*9)
@@ -249,7 +249,7 @@ function MPR_AuraInfo:Initialize()
     Text2:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Text2:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Text2:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     -- 3 --
     Name3 = CreateFrame("SimpleHTML", "Name3", MPR_AuraInfo);
     Name3:SetWidth(MPR_AuraInfo:GetWidth()-2*8)
@@ -260,7 +260,7 @@ function MPR_AuraInfo:Initialize()
     Name3:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Name3:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Name3:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     Text3 = CreateFrame("SimpleHTML", "Text3", MPR_AuraInfo);
     Text3:SetHeight(50)
     Text3:SetWidth(MPR_AuraInfo:GetWidth()-2*9)
@@ -272,7 +272,7 @@ function MPR_AuraInfo:Initialize()
     Text3:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Text3:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Text3:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     -- 4 --
     Name4 = CreateFrame("SimpleHTML", "Name4", MPR_AuraInfo);
     Name4:SetWidth(MPR_AuraInfo:GetWidth()-2*8)
@@ -283,7 +283,7 @@ function MPR_AuraInfo:Initialize()
     Name4:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Name4:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Name4:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     Text4 = CreateFrame("SimpleHTML", "Text4", MPR_AuraInfo);
     Text4:SetHeight(50)
     Text4:SetWidth(MPR_AuraInfo:GetWidth()-2*9)
@@ -295,7 +295,7 @@ function MPR_AuraInfo:Initialize()
     Text4:SetScript("OnHyperlinkClick", OnHyperlinkClick)
     Text4:SetScript("OnHyperlinkEnter", onHyperlinkEnter)
     Text4:SetScript("OnHyperlinkLeave", onHyperlinkLeave)
-    
+
     MPR_AuraInfo.Loaded = true
 end
 
@@ -315,7 +315,7 @@ function MPR_AuraInfo:ClearFrame(n)
 end
 
 function MPR_AuraInfo:UpdateFrameSize(more)
-    if more ~= nil then 
+    if more ~= nil then
         MPR_AuraInfo.FrameSize = more and MPR_AuraInfo.FrameSize + 1 or MPR_AuraInfo.FrameSize - 1
     end
     local NewHeight = 44
@@ -362,11 +362,11 @@ function MPR_AuraInfo:UpdateFrameNumber(up)
         if num == MPR_AuraInfo.FrameNumber then
             MPR_AuraInfo:UpdateFrame(MPR_AuraInfo.FrameNumbers[up and i + 1 or i - 1])
             return
-        end    
+        end
     end
 end
 
-function MPR_AuraInfo:UpdateFrame(num)    
+function MPR_AuraInfo:UpdateFrame(num)
     if num == nil then
         num = MPR_AuraInfo.FrameNumber or 1
         MPR_AuraInfo.FrameNumber = MPR_AuraInfo.FrameNumber or 1
@@ -377,13 +377,13 @@ function MPR_AuraInfo:UpdateFrame(num)
     else
         MPR_AuraInfo.FrameNumber = num
     end
-    
+
     local AI_Strings = MPR_AuraInfo.Strings[num] or nil
     if not AI_Strings then error("Unknown frame number: "..tostring(num)) end
-    
+
     MPR_AuraInfo:ClearFrame(AI_Strings[1])
     Subtitle:SetText(AI_Strings[2])
-    
+
     Name1:SetText(AI_Strings[3])
     if MPR_AuraInfo.FrameNumber == 3 then
         Name1:SetText("|cFF6666FFSkybreaker|r and |cFFFF6666Orgrim's Hammer|r (Hit Points):")
@@ -401,7 +401,7 @@ function MPR_AuraInfo:UpdateFrame(num)
             end
         end
     end
-    
+
     if 1 <= num and num <= 12 then -- ICC
         Subtitle:SetTextColor(0/255, 204/255, 255/255)
     elseif 13 <= num and num <= 19 then -- TOC
@@ -409,7 +409,7 @@ function MPR_AuraInfo:UpdateFrame(num)
     elseif 20 <= num and num <= 23 then -- RS
         Subtitle:SetTextColor(255/255, 153/255, 18/255)
     end
-    
+
     MPR_AuraInfo:Show()
     if not MPR.Settings["AURAINFO"] then
         MPR:SelfReport("Aura Info is |cFFFF0000disabled|r. |cff3588ff|HMPR:Options:Show|h[Options]|h|r")
@@ -455,7 +455,7 @@ local AR_LastCheck, AR_LastCheckHP -- Anub'arak
 
 function MPR_AuraInfo:UpdateFrameData(diff)
     if not MPR_AuraInfo.FrameNumber then return end
-    
+
     if MPR_AuraInfo.FrameNumber == 1 then -- ICC: Lord Marrowgar
         local array = {}
         for i=1,GetNumRaidMembers() do
@@ -498,7 +498,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
         else
             String = String.."No information\n"
         end
-        
+
         if H_Health > 0 then
             GB_LastCheck = (GB_LastCheck or 0) + diff
             if not GB_LastCheckHP then
@@ -509,7 +509,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 local HealthDiff = GB_LastCheckHP - H_Health
                 local DPS = HealthDiff/GB_LastCheck
                 local TimeLeft = H_Health/DPS
-                
+
                 GB_LastCheckHP = H_Health
                 GB_LastCheck = 0
                 GB_String1 = string.format("DPS: %s; Est. Finish: %s sec", round(DPS,-2,true), round(TimeLeft,0,true))
@@ -517,9 +517,9 @@ function MPR_AuraInfo:UpdateFrameData(diff)
         else
             GB_String1 = "DPS: nil; - Est. Finish: nil"
         end
-        
+
         Text1:SetText(String..GB_String1)
-        
+
         -- Warning: FALL BACK!
         if round(100*H_Health/H_HealthMax,0,true) <= 10 and not Under10Pct then
             Under10Pct = true
@@ -527,14 +527,14 @@ function MPR_AuraInfo:UpdateFrameData(diff)
         elseif round(100*H_Health/H_HealthMax,0,true) > 10 and Under10Pct then
             Under10Pct = nil
         end
-        
+
         if round(100*H_Health/H_HealthMax,0,true) <= 5 and not Under5Pct then
             Under5Pct = true
-            MPR:RaidReport("Warning: Enemy ship has 5% HP remaining! Prepare to fall back!")    
+            MPR:RaidReport("Warning: Enemy ship has 5% HP remaining! Prepare to fall back!")
         elseif round(100*H_Health/H_HealthMax,0,true) > 5 and Under5Pct then
             Under5Pct = nil
         end
-        
+
         if round(100*H_Health/H_HealthMax,0,true) <= 3 and not Under3Pct then
             Under3Pct = true
             MPR:RaidReport("Warning: Enemy ship has 3% HP remaining! FALL BACK!!")
@@ -657,7 +657,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                         table.insert(array3,string.format("%s (%s%%)",self:UnitRaid(Unit),Health))
                     end
                 end
-            end            
+            end
         end
         Text1:SetText(table.concat(array1,", "))
         Text2:SetText(table.concat(array2,", "))
@@ -669,7 +669,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
             local Health, HealthMax = UnitHealth(UnitID), UnitHealthMax(UnitID)
             local HealthPct = math.floor(Health*100/HealthMax) + (Health == HealthMax and 0 or 1)
             String = string.format("|cFF00ff00VD|r: %.1fM/%.1fM (%i%%)", round(Health/1000000,1,true), round(HealthMax/1000000,1,true), HealthPct)
-            
+
             VD_LastCheck = (VD_LastCheck or 0) + diff
             if not VD_LastCheckHP then
                 VD_LastCheckHP = Health
@@ -680,7 +680,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 local HPS = HealthDiff/VD_LastCheck
                 local strHPS = ""
                 strHPS = "|cFF"..(HPS > 0 and "00FF" or "FF00").."00"..tostring(round(HPS,-3,true)).."k|r"
-                
+
                 VD_LastCheckHP = Health
                 VD_LastCheck = 0
                 VD_String1 = string.format("Diff/HPS: %s", strHPS)
@@ -689,7 +689,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
             String = "|cFF00ff00VD|r: No information"
         end
         Text1:SetText(String.."\n"..VD_String1)
-        
+
         local array = {}
         for i=1,GetNumRaidMembers() do
             local Unit = UnitName("raid"..i)
@@ -715,7 +715,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
             if Debuff and Count >= 5 then
                 --local Expiration = round(ExpirationTime-GetTime(),0,true)
                 table.insert(array1,string.format("%s (%s)",self:UnitRaid(Unit),Count))
-            end                        
+            end
             local Debuff, _, _, Count, _, _, ExpirationTime = UnitDebuff(Unit,"Instability")
             if UnitDebuff(Unit,"Unchained Magic") or Debuff then
                 if Debuff then
@@ -729,7 +729,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
             if Debuff and Count >= 5 then
                 local Expiration = round(ExpirationTime-GetTime(),0,true)
                 table.insert(array3,string.format("%s (%s)(%ss)",self:UnitRaid(Unit),Count,Expiration))
-            end        
+            end
         end
         Text1:SetText(table.concat(array1,", "))
         Text2:SetText(table.concat(array2,"\n"))
@@ -737,7 +737,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
     elseif MPR_AuraInfo.FrameNumber == 12 then -- ICC: The Lich King
         local array1 = {}
         local array2 = {}
-        local array3 = {} 
+        local array3 = {}
         for i=1,GetNumRaidMembers() do
             local Unit = UnitName("raid"..i)
             local Debuff, _, _, _, _, _, ExpirationTime = UnitDebuff(Unit,"Necrotic Plague")
@@ -766,7 +766,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
             if Debuff then
                 local Expiration = round(ExpirationTime-GetTime(),0,true)
                 table.insert(array1,string.format("%s (%s)(%ss)",self:UnitRaid(Unit),Count,Expiration))
-            end    
+            end
         end
         Text1:SetText(table.concat(array1,"\n"))
     elseif MPR_AuraInfo.FrameNumber == 14 then -- TOC: Acidmaw & Dreadscale
@@ -778,7 +778,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 local Expiration = round(ExpirationTime-GetTime(),0,true)
                 local Health = round(UnitHealth(Unit) * 100 / UnitHealthMax(Unit),0,true)
                 table.insert(array1,string.format("%s (%s%%)(%ss)",self:UnitRaid(Unit),Health,Expiration))
-            end    
+            end
         end
         Text1:SetText(table.concat(array1,"\n"))
     elseif MPR_AuraInfo.FrameNumber == 16 then -- TOC: Lord Jaraxxus
@@ -819,19 +819,19 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 AR_LastCheck = 0
                 Text1:SetText("Calculating ...")
             elseif AR_LastCheck >= 2 then
-                
+
                 local Health = UnitHealth(UnitID)
                 local modHP = AR_LastCheckHP - Health
                 local DPS = modHP/AR_LastCheck
                 local TimeLeft = Health/DPS
-                
+
                 AR_LastCheckHP = Health
                 AR_LastCheck = 0
-                
+
                 Text1:SetText("DPS: "..round(DPS,-3,true).."\nAssumed Finish: "..round(TimeLeft,0,true).." sec")
             end
         else
-            Text1:SetText(Message) 
+            Text1:SetText(Message)
         end
     elseif MPR_AuraInfo.FrameNumber == 20 then -- RS: Saviana Ragefire
         local UnitID, Message = self:GetBossID("Saviana Ragefire")
@@ -845,7 +845,7 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 Text1:SetText("")
             end
         else
-            Text1:SetText(Message) 
+            Text1:SetText(Message)
         end
     elseif MPR_AuraInfo.FrameNumber == 21 then -- RS: Baltharus the Warborn
         local array = {}
@@ -885,8 +885,8 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 table.insert(array,string.format("%s (%ss)(%s)",self:UnitRaid(Unit),Expiration,Count or 0))
             end
         end
-        Text1:SetText(table.concat(array,", "))        
-        
+        Text1:SetText(table.concat(array,", "))
+
         local UnitID, Message = self:GetBossID("Halion")
         if UnitID then
             local Debuff, _, _, SpellID = self:GetBuffInfo(UnitID,"Corporeality")
@@ -895,21 +895,21 @@ function MPR_AuraInfo:UpdateFrameData(diff)
                 Name2:SetText(GetSpellLink(74826).." (Phase 3): |cFF"..Color..Percentage.."%|r")
                 Percentage = tonumber(Percentage)
                 local Msg = Percentage < 40 and "More DPS in this realm!!" or --0-20
-                            Percentage == 40 and "More DPS in this realm!" or --40-50
-                            Percentage == 50 and "Balanced DPS." or -- 50
-                            Percentage == 60 and "More DPS in opposite realm!" or --
-                            Percentage > 60 and "More DPS in opposite realm!!" or "" --
+                        Percentage == 40 and "More DPS in this realm!" or --40-50
+                        Percentage == 50 and "Balanced DPS." or -- 50
+                        Percentage == 60 and "More DPS in opposite realm!" or --
+                        Percentage > 60 and "More DPS in opposite realm!!" or "" --
                 Text2:SetText("|cFF"..Color..Msg.."|r\n"..
-                                "|cFFFFFFFFPlayer's Realm:|r\n"..
-                                    "Boss Damage Taken |cFF"..Color..DamageTaken.."%|r, Boss Damage |cFF"..Color..DamageDealt.."%|r\n"..
-                                "|cFFFFFFFFOpposite Realm:|r\n"..
-                                    "Boss Damage Taken |cFF"..Color..DamageTaken2.."%|r, Boss Damage |cFF"..Color..DamageDealt2.."%|r")
+                        "|cFFFFFFFFPlayer's Realm:|r\n"..
+                        "Boss Damage Taken |cFF"..Color..DamageTaken.."%|r, Boss Damage |cFF"..Color..DamageDealt.."%|r\n"..
+                        "|cFFFFFFFFOpposite Realm:|r\n"..
+                        "Boss Damage Taken |cFF"..Color..DamageTaken2.."%|r, Boss Damage |cFF"..Color..DamageDealt2.."%|r")
             else
                 Name2:SetText(GetSpellLink(74826).." (Phase 3): n/a")
                 Text2:SetText("Waiting for Phase 3 ...")
             end
         else
-            Name2:SetText(GetSpellLink(74826).." (Phase 3): n/a") 
+            Name2:SetText(GetSpellLink(74826).." (Phase 3): n/a")
             Text2:SetText(Message)
         end
     end
