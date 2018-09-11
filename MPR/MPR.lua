@@ -257,7 +257,7 @@ local npcBossSpellSummon = {"Vengeful Shade"} -- Boss summons, destination is un
 local spellsCast = {"Blessing of Forgotten Kings", "Runescroll of Fortitude", "Drums of the Wild", "Aura Mastery", "Divine Sacrifice", "Mana Tide Totem", 69381}
 -- [69381] = Drums: Gift of the Wilds
 tankCooldownsCast = {"Divine Protection", "Icebound Fortitude", "Vampiric Blood", "Anti-Magic Shell", "Anti-Magic Zone", "Barkskin", "Survival Instincts", "Frenzied Regeneration", "Shield Wall", "Last Stand"}
-otherSpellsCast = {"Soulshatter", "Invisibility", "Ice Block", "Hymn of Hope", "Psychic Scream", "Dispersion", "Army of the Dead", "Holy Wrath", "Cloak of Shadows", "Shockwave", "Deterrence"}
+otherSpellsCast = {"Soulshatter", "Invisibility", "Ice Block", "Hymn of Hope", "Divine Hymn", "Psychic Scream", "Dispersion", "Army of the Dead", "Cloak of Shadows", "Deterrence"}
 local npcSpellsCast = {"Remorseless Winter", "Quake", "Dark Vortex", "Light Vortex"}
 --| Output: Unit casts [Spell] on Target. |--
 local spellsCastOnTarget = {"Innervate", "Tricks of the Trade", "Misdirection", "Hand of Protection", "Hand of Salvation", "Divine Intervention", "Hand of Sacrifice", "Hand of Freedom", "Lay on Hands", "Guardian Spirit", "Pain Suppression"}
@@ -267,7 +267,7 @@ otherSpellsCastOnTarget = {"Power Infusion", "Hysteria", "Fear Ward", "Banish", 
 
 -- Auras (SPELL_AURA_APPLIED, SPELL_AURA_APPLIED_DOSE, SPELL_AURA_STOLEN) --
 local aurasApplied = {"Eyes of Twilight"}
-tankAurasApplied = {"Aegis of Dalaran", "Ardent Defender", "Enraged Defense"}
+tankAurasApplied = {"Aegis of Dalaran", "Ardent Defender", "Enraged Defense", "Blood Armor"}
 --| Output: [Spell] applied on Target. |--
 --| Filter: UnitIsPlayer(Target)
 local aurasAppliedOnTarget = {"Volatile Ooze Adhesive", "Gaseous Bloat", "Unbound Plague", "Soul Consumption", "Fiery Combustion", "Soulstone Resurrection"}
@@ -1228,13 +1228,11 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                     else
                         self:ReportCast(sourceName,spellId)
                     end
-                elseif self.Settings["REPORT_TANKCDS"] and contains(tankCooldownsCast,spellName) then
+                elseif (self.Settings["REPORT_TANKCDS"] and contains(tankCooldownsCast,spellName)) or
+                       (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCast,spellName)) then
                     self:ReportCast(sourceName,spellId)
-                elseif self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCast,spellName) then
-                    self:ReportCast(sourceName,spellId)
-                elseif contains(spellsCastOnTarget,spellName) then
-                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
-                elseif self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCastOnTarget,spellName) then
+                elseif (contains(spellsCastOnTarget,spellName)) or
+                       (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCastOnTarget,spellName)) then
                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                 end
             elseif contains(spellsBossCastOnTarget,spellName) then
