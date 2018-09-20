@@ -1,5 +1,16 @@
 MPR_Options = CreateFrame("Frame", "MPR Options", UIParent);
 
+local raidIcons = {
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:12\124t : {rt1} or {star}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:12\124t : {rt2} or {circle}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:12\124t : {rt3} or {diamond}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:12\124t : {rt4} or {triangle}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:12\124t : {rt5} or {moon}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:12\124t : {rt6} or {square}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:12\124t : {rt7} or {cross}",
+    "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:12\124t : {rt8} or {skull}"
+}
+
 local framecount = 0
 function GetNewID()
     framecount = framecount + 1
@@ -482,8 +493,7 @@ function MPR_Options:Initialize()
     MPR_Options.EB_PREFIX:SetHeight(18)
     MPR_Options.EB_PREFIX:SetWidth(60)
     MPR_Options.EB_PREFIX:SetMaxLetters(10)
-    local ChatSymbols = {"{star}", "{skull}", "{cross}", "{circle}", "{moon}", "{diamond}", "{square}", "{triangle}"}
-    MPR_Options.EB_PREFIX:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(MPR_Options.EB_PREFIX, ChatSymbols, "E.g. Symbols:") end)
+    MPR_Options.EB_PREFIX:SetScript("OnEnter", function(self) MPR_Options:ShowGameTooltip(MPR_Options.EB_PREFIX, raidIcons, "E.g. Symbols:") end)
     MPR_Options.EB_PREFIX:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
     MPR_Options.BTN_SAVE_PREFIX = CreateFrame("button","BtnSavePrefix", MPR_Options, "UIPanelButtonTemplate")
     MPR_Options.BTN_SAVE_PREFIX:SetHeight(18)
@@ -616,8 +626,8 @@ end
 
 function concatTables(t, ...)
     local new = {unpack(t)}
-    for i,v in ipairs({...}) do
-        for j,w in ipairs(v) do
+    for _,v in ipairs({...}) do
+        for _,w in ipairs(v) do
             new[#new+1] = w
         end
     end

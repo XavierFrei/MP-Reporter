@@ -166,6 +166,18 @@ local BossYells = {
     ["I think I made an angry poo-poo. It gonna blow!"] = "OOZE EXPLOSION! Run away!!",
     ["We're taking hull damage, get a battle-mage out here to shut down those cannons!"] = "MAGE SPAWNED!!",
     ["We're taking hull damage, get a sorcerer out here to shut down those cannons!"] = "MAGE SPAWNED!!",
+    ["Enough! I see I must take matters into my own hands!"] = "PHASED! Hunter's MD!", -- Mana Shield LDW drops.
+    ["You are weak, powerless to resist my will!"] = "MC! Druid's Cyclone!", -- MC's Lady DW
+    ["Feast, my minions!"] = "Blood Beasts! Kill them!", -- Bloodbeast Spawn DBS
+    ["Two oozes, one room! So many delightful possibilities..."] = "Transition! Stack and check Variable!", -- Transition PP
+    ["I have opened a portal into the Dream. Your salvation lies within, heroes."] = "Portals!", -- Portals Open @ VDW
+    ["Now feel my master's limitless power and despair!"] = "Phase 2! Watch your stacks!", -- P2 Sindragosa
+    ["Suffer, mortals, as your pathetic magic betrays you!"] = "Unchained! Watch it!", -- Unchained Magic Sindragosa
+    ["I am the light and the darkness! Cower, mortals, before the herald of Deathwing!"] = "Phase 3! Go out!", -- Halion P3
+    ["Such wondrous power! The Darkfallen Orb has made me INVINCIBLE!"] = "Empowered Keleseth!! DPS him!!", -- Empowered Keleserth
+    ["Tremble before Taldaram, mortals, for the power of the orb flows through me!"] = "Empowered Taldaram!! DPS him!!", -- Empowered Taldaram
+    ["Naxxanar was merely a setback! With the power of the orb, Valanar will have his vengeance!"] = "Empowered Valanar!! DPS him!!", -- Empowered Valanar
+    ["Val'kyr, your master calls!"] = "Val'Kyr's!! Stack!!", -- Val'Kyr's at LK
 }
 local BossRaidYells = {
     ["I think I made an angry poo-poo. It gonna blow!"]                                  = "Ooze Explosion in 4 sec. Run away!!",
@@ -181,50 +193,51 @@ local ClassBIS = {
     --        ["Spec3"] = {...},
     --    },
     ["Paladin"] = {
-        ["Retribution"] = {"Penumbra Pendant", "Shadowvault Slayer's Cloak", "Polar Bear Claw Bracers", "Umbrage Armbands", "Fleshrending Gauntlets", "Astrylian's Sutured Cinch", "Apocalypse's Advance", "Signet of Twilight", "Sharpened Twilight Scale", "Tiny Abomination in a Jar", "Oathbinder, Charge of the Ranger-General"},
-        ["Holy"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Mail of Crimson Coins", "Bracers of Fiery Night", "Unclean Surgical Gloves", "Split Shape Belt", "Plaguebringer's Stained Pants", "Foreshadow Steps", "Marrowgar's Frigid Eye", "Solace of the Defeated", "Bulwark of Smouldering Steel", "Bloodsurge, Kel'Thuzad's Blade of Agony"},
-        ["Protection"] = {"Bile-Encrusted Medallion", "Sentinel's Winter Cloak", "Gargoyle Spit Bracers", "Verdigris Chain Belt", "Pillars of Might", "Grinning Skull Greatboots", "Devium's Eternally Cold Ring", "Band of the Twin Val'kyr", "Satrina's Impeding Scarab", "Sindragosa's Flawless Fang", "Mithrios, Bronzebeard's Legacy", "Icecrown Glacial Wall"},
+        ["Retribution"] = {"Penumbra Pendant", "Shadowvault Slayer's Cloak", "Umbrage Armbands", "Fleshrending Gauntlets", "Astrylian's Sutured Cinch", "Apocalypse's Advance", "Signet of Twilight", "Sharpened Twilight Scale", "Tiny Abomination in a Jar", "Oathbinder, Charge of the Ranger-General"},
+        ["Holy"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Rot-Resistant Breastplate", "Bracers of Fiery Night", "Fallen Lord's Handguards", "Split Shape Belt", "Plaguebringer's Stained Pants", "Foreshadow Steps", "Ring of Rapid Ascent", "Ring of Phased Regeneration","Solace of the Fallen", "Solace of the Defeated", "Glowing Twilight Scale", "Bulwark of Smouldering Steel", "Bloodsurge, Kel'Thuzad's Blade of Agony"},
+        ["Protection"] = {"Broken Ram Skull Helm", "Bile-Encrusted Medallion", "Boneguard Commander's Pauldrons", "Royal Crimson Cloak", "Bracers of Dark Reckoning", "Belt of Broken Bones", "Legguards of Lost Hope", "Treads of Impending Ressurection", "Juggernaut Band", "Devium's Eternally Cold Ring", "Satrina's Impeding Scarab", "Juggernaut's Vitality", "Sindragosa's Flawless Fang", "Mithrios, Bronzebeard's Legacy", "Icecrown Glacial Wall"},
+        ["Protection Armor"] = {"Bile-Encrusted Medallion", "Gargoyle Spit Bracers", "Juggernaut Band", "Devium's Eternally Cold Ring", "Treads of Impending Ressurection", "Sindragosa's Flawless Fang", "Petrified Twilight Scale", "Mithrios, Bronzebeard's Legacy", "Icecrown Glacial Wall"}
     },
     ["Priest"] = {
-        ["Shadow"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Ring of Rapid Ascent", "Dislodged Foreign Object", "Phylactery of the Nameless Lich", "Royal Scepter of Terenas II", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
-        ["Holy"] = {"Sentinel's Amulet", "Greatcloak of the Turned Champion", "Sanguine Silk Robes", "Death Surgeon's Sleeves", "Circle of Ossus", "Boots of the Mourning Widow", "Memory of Malygos", "Solace of the Defeated", "Althor's Abacus", "Frozen Bonespike", "Sundial of Eternal Dusk", "Nightmare Ender"},
-        ["Discipline"] = {},
+        ["Shadow"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Charred Twilight Scale", "Phylactery of the Nameless Lich", "Royal Scepter of Terenas II", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
+        ["Holy"] = {"Sentinel's Amulet", "Greatcloak of the Turned Champion", "Sanguine Silk Robes", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plague Scientist's Boots", "Memory of Malygos", "Ring of Phased Regeneration", "Solace of the Fallen", "Solace of the Defeated", "Althor's Abacus", "Glowing Twilight Scale", "Royal Scepter of Terenas II", "Sundial of Eternal Dusk", "Corpse-Impaling Spike"},
+        ["Discipline"] = {"Holiday's Grace", "Cloak of Burning Dusk", "Bracers of Fiery Night", "San'layn Ritualist Gloves", "Lingering Illness", "Plague Scientist's Boots", "Ring of Maddening Whispers", "Incarnadine Band of Mending", "Solace of the Fallen", "Solace of the Defeated", "Althor's Abacus", "Glowing Twilight Scale", "Royal Scepter of Terenas II", "Shadow Silk Spindle", "Nightmare Ender"},
     },
     ["Rogue"] = {
-        ["Assassination"] = {"Sindragosa's Cruel Claw", "Cultist's Bloodsoaked Spaulders", "Shadowvault Slayer's Cloak", "Ikfirus' Sack of Wonder", "Umbrage Armbands", "Belt of the Merciless Killer", "Frostbitten Fur Boots", "Band of the Bone Colossus", "Tiny Abomination in a Jar", "Herkuml War Token", "Heaven's Fall, Kryss of a Thousand Lies", "Lungbreaker", "Gluth's Fetching Knife"},
-        ["Combat"] = {"Sindragosa's Cruel Claw", "Shadowvault Slayer's Cloak", "Ikfirus' Sack of Wonder", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Astrylian's Sutured Cinch", "Gangrenous Leggings", "Frostbrood Sapphire Ring", "Deathbringer's Will", "Whispering Fanged Skull", "Bloodvenom Blade", "Scourgeborne Waraxe", "Stakethrower"},
+        ["Assassination"] = {"Sindragosa's Cruel Claw", "Shadowvault Slayer's Cloak", "Ikfirus' Sack of Wonder", "Umbrage Armbands", "Astrylian's Sutured Cinch", "Frostbitten Fur Boots", "Signet of Twilight", "Sharpened Twilight Scale", "Heaven's Fall, Kryss of a Thousand Lies", "Lungbreaker", "Gluth's Fetching Knife"},
+        ["Combat"] = {"Sindragosa's Cruel Claw", "Sylvanas' Cunning", "Vereesa's Dexterity", "Ikfirus' Sack of Wonder", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Astrylian's Sutured Cinch", "Gangrenous Leggings", "Frostbitten Fur Boots", "Frostbrood Sapphire Ring", "Deathbringer's Will", "Sharpened Twilight Scale", "Havoc's Call, Blade of Lordaeron Kings", "Scourgeborne Waraxe", "Fal'inrush, Defender of Quel'Thalas"},
     },
     ["Shaman"] = {
-        ["Restoration"] = {"Blood Queen's Crimson Choker", "Frostbinder's Shredded Cape", "Bloodsunder's Bracers", "Crushing Coldwraith Belt", "Plague Scientist's Boots", "Ring of Rapid Ascent","Althor's Abacus", "Glowing Twilight Scale", "Trauma", "Bulwark of Smouldering Steel"},
+        ["Restoration"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Phaseshifter's Bracers", "Changeling Gloves", "Split Shape Belt", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Ring of Phased Regeneration", "Solace of the Fallen", "Solace of the Defeated", "Glowing Twilight Scale", "Royal Scepter of Terenas II", "Bulwark of Smouldering Steel"},
         ["Enhancement"] = {"Precious' Putrid Collar", "Shadowvault Slayer's Cloak", "Umbrage Armbands", "Anub'ar Stalker's Gloves", "Nerub'ar Stalker's Cord", "Returning Footfalls", "Band of the Bone Colossus", "Sharpened Twilight Scale", "Havoc's Call, Blade of Lordaeron Kings"},
-        ["Elemental"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Gunship Captain's Mittens", "Split Shape Belt", "Plaguebringer's Stained Pants", "Plague Scientists Boots", "Ring of Rapid Ascent", "Dislodged Foreign Object", "Charred Twilight Scale", "Phylactery of the Nameless Lich", "Royal Scepter of Terenas II", "Bulwark of Smouldering Steel"},
+        ["Elemental"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Split Shape Belt", "Plaguebringer's Stained Pants", "Plague Scientists Boots", "Ring of Rapid Ascent", "Phylactery of the Nameless Lich", "Charred Twilight Scale", "Royal Scepter of Terenas II", "Bulwark of Smouldering Steel"},
     },
     ["Druid"] = {
-        ["Restoration"] = {"Bone Sentinel's Amulet", "Greatcloak of the Turned Champion", "Sanguine Silk Robes", "Bracers of Eternal Dreaming", "Professor's Bloodied Smock", "Memory of Malygos", "Solace of the Defeated", "Althor's Abacus", "Trauma", "Sundial of Eternal Dusk"},
-        ["Feral-D."] = {"Sindragosa's Cruel Claw", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Astrylian's Sutured Cinch", "Frostbrood Sapphire Ring", "Deathbringer's Will", "Sharpened Twilight Scale", "Oathbinder, Charge of the Ranger-General"},
-        ["Feral-T."] = {"Royal Crimson Cloak", "Ikfirus's Sack of Wonder", "Footpads of Impending Death", "Devium's Eternally Cold Ring", "Bloodfall", "Frostbitten Fur Boots", "Bile-Encrusted Medallion", "Sindragosa's Flawless Fang", "Umbrage Armbands", "Astrylian's Sutured Cinch"},
-        ["Balance"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Valanar's Other Signet Ring", "Royal Scepter of Terenas II", "Shadow Silk Spindle"},
+        ["Restoration"] = {"Bone Sentinel's Amulet", "Greatcloak of the Turned Champion", "Sanguine Silk Robes", "Phaseshifter's Bracers", "Professor's Bloodied Smock", "Plague Scientist's Boots", "Memory of Malygos", "Ring of Phased Regeneration", "Althor's Abacus", "Glowing Twilight Scale", "Royal Scepter of Terenas II", "Sundial of Eternal Dusk"},
+        ["Feral-D."] = {"Sindragosa's Cruel Claw", "Shadowvault Slayer's Cloak", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Astrylian's Sutured Cinch", "Frostbitten Fur Boots", "Signet of Twilight", "Frostbrood Sapphire Ring", "Deathbringer's Will", "Sharpened Twilight Scale", "Oathbinder, Charge of the Ranger-General"},
+        ["Feral-T."] = {"Bile-Encrusted Medallion", "Royal Crimson Cloak", "Ikfirus's Sack of Wonder", "Umbrage Armbands", "Astrylian's Sutured Cinch", "Frostbitten Fur Boots", "Devium's Eternally Cold Ring", "Abomination's Bloody Ring", "Satrina's Impeding Scarab", "Juggernaut's Vitality", "Sindragosa's Flawless Fang", "Oathbinder, Charge of the Ranger-General", "Cryptmaker"},
+        ["Balance"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Valanar's Other Signet Ring", "Phylactery of the Nameless Lich", "Charred Twilight Scale", "Royal Scepter of Terenas II", "Shadow Silk Spindle"},
     },
     ["Death Knight"] = {
-        ["Blood-D."] = {"Lana'thel's Chain of Flagellation", "Winding Sheet", "Polar Bear Claw Bracers", "Coldwraith Links", "Blood-Soaked Saronite Stompers", "Might of Blight", "Deathbringer's Will", "Death's Choice", "Bryntroll, the Bone Arbiter"},
-        ["Unholy-D."] = {"Scourge Reaver's Legplates", "Lana'thel's Chain of Flagellation", "Winding Sheet", "Polar Bear Claw Bracers", "Coldwraith Links", "Blood-Soaked Saronite Stompers", "Might of Blight", "Deathbringer's Will", "Death's Choice", "Oathbinder, Charge of the Ranger-General"},
-        ["Frost-D."] = {"Fleshrending Gauntlets", "Lana'thel's Chain of Flagellation", "Winding Sheet", "Polar Bear Claw Bracers", "Coldwraith Links", "Blood-Soaked Saronite Stompers", "Might of Blight", "Deathbringer's Will", "Death's Choice", "Havoc's Call, Blade of Lordaeron Kings"},
+        ["Blood-T."] = {"Broken Ram Skull Helm", "Bile-Encrusted Medallion", "Royal Crimson Cloak", "Bracers of Dark Reckoning", "Belt of Broken Bones", "Treads of Impending Resurrection", "Devium's Eternally Cold Ring", "Juggernaut Band", "Satrina's Impeding Scarab", "Juggernaut's Vitality", "Sindragosa's Flawless Fang", "Glorenzelg, High-Blade of the Silver Hand"},
+        ["Unholy-D."] = {"Penumbra Pendant", "Winding Sheet", "Umbrage Armbands", "Coldwraith Links", "Scourge Reaver's Legplates", "Apocalypse's Advance", "Might of Blight", "Deathbringer's Will", "Deathbringer's Will", "Glorenzelg, High-Blade of the Silver Hand"},
+        ["Frost-D."] = {"Fleshrending Gauntlets", "Penumbra Pendant", "Garrosh's Rage", "Varian's Furor", "Toskk's Maximized Wristguards", "Coldwraith Links", "Apocalypse's Advance", "Might of Blight", "Deathbringer's Will", "Deathbringer's Will", "Havoc's Call, Blade of Lordaeron Kings"},
     },
     ["Hunter"] = {
-        ["Marksmanship"] = {"Sindragosa's Cruel Claw", "Toskk's Maximized Wristguards", "Nerub'ar Stalker's Cord", "Leggings of Northern Lights", "Frostbrood Sapphire Ring", "Sharpened Twilight Scale", "Deathbringer's Will", "Oathbinder, Charge of the Ranger-General", "Fal'inrush, Defender of Quel'thalas"},
+        ["Marksmanship"] = {"Sindragosa's Cruel Claw", "Sylvanas' Cunning", "Vereesa's Dexterity", "Scourge Hunter's Vambraces", "Nerub'ar Stalker's Cord", "Leggings of Northern Lights", "Returning Footfalls", "Frostbrood Sapphire Ring", "Sharpened Twilight Scale", "Deathbringer's Will", "Oathbinder, Charge of the Ranger-General", "Fal'inrush, Defender of Quel'thalas"},
     },
     ["Mage"] = {
         ["Fire"] = {"Blood Queen's Crimson Choker", "Cloak of Burning Dusk", "Robe of the Waking Nightmare", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Phylactery of the Nameless Lich", "Charred Twilight Scale", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
-        ["Arcane"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "San'layn Ritualist Gloves", "Crushing Coldwraith Belt", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Charred Twilight Scale", "Dislodged Foreign Object", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
+        ["Arcane"] = {"Blood Queen Crimson Choker", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Charred Twilight Scale", "Dislodged Foreign Object", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
     },
     ["Warlock"] = {
-        ["Affliction"] = {"Blood Queen's Crimson Choker", "Frostbinder's Shredded Cape", "The Lady's Brittle Bracers", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Memory of Malygos", "Dislodged Foreign Object", "Phylactery of the Nameless Lich", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
-        ["Demonology"] = {},
-        ["Destruction"] = {"Sanctified Dark Coven Hood", "Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Valanar's Other Signet Ring", "Dislodged Foreign Object", "Charred Twilight Scale", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
+        ["Affliction"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dust", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Ring of Rapid Ascent", "Dislodged Foreign Object", "Charred Twilight Scale", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
+        ["Demonology"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dust", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Valanar's Other Signet Ring", "Phylactery of the Nameless Lich", "Charred Twilight Scale", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
+        ["Destruction"] = {"Amulet of the Silent Eulogy", "Cloak of Burning Dusk", "Bracers of Fiery Night", "Crushing Coldwraith Belt", "Plaguebringer's Stained Pants", "Plague Scientist's Boots", "Valanar's Other Signet Ring", "Dislodged Foreign Object", "Charred Twilight Scale", "Bloodsurge, Kel'Thuzad's Blade of Agony", "Shadow Silk Spindle", "Corpse-Impaling Spike"},
     },
     ["Warrior"] = {
-        ["Fury"] = {"Lana'thel's Chain of Flagellation", "Shawl of Nerubian Silk", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Astrylian Suttered Cinch", "Frostbitten Fur Boots", "Frostbrood Saphire Ring", "Sharpened Twilight Scale", "Deathbringer's Will", "Cryptmaker", "Stakethrower"},
-        ["Protection"] = {"Troggbane, Axe of the Frostborne King", "Icecrown Glacial Wall", "Bile-Encrusted Medallion", "Royal Crimson Cloak", "Bracers of Dark Reckoning", "Taldaram's Plated Fists", "Grinning Skull Greatboots", "Juggernaut Band", "Sindragosa's Flawless Fang", "Dreamhunter's Carbine"},
+        ["Fury"] = {"Penumbra Pendant", "Sylvanas' Cunning", "Vereesa's Dexterity", "Toskk's Maximized Wristguards", "Aldriana's Gloves of Secrecy", "Coldwraith Links", "Apocalypse's Advance", "Frostbrood Saphire Ring", "Sharpened Twilight Scale", "Deathbringer's Will", "Glorenzelg, High-Blade of the Silver Hand", "Cryptmaker", "Fal'inrush, Defender of Quel'thalas"},
+        ["Protection"] = {"Broken Ram Skull Helm", "Bile-Encrusted Medallion", "Royal Crimson Cloak", "Bracers of Dark Reckoning", "Belt of Broken Bones", "Treads of Impending Ressurection", "Juggernaut Band", "Devium's Eternally Cold Ring", "Satrina's Impeding Scarab", "Juggernaut's Vitality", "Sindragosa's Flawless Fang", "Mithrios, Bronzebeard's Legacy", "Icecrown Glacial Wall", "Dreamhunter's Carbine"},
     },
 }
 
@@ -289,8 +302,19 @@ local paladinAuras = {
     "Concentration Aura",
     "Shadow Resistance Aura",
     "Frost Resistance Aura",
-    "Fire Resistance",
+    "Fire Resistance Aura",
     "Crusader Aura"
+}
+
+local raidTargetIcons ={
+    [1] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_1:12\124t","{rt1}"}, -- Star
+    [2] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_2:12\124t","{rt2}"}, -- Circle
+    [3] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_3:12\124t","{rt3}"}, -- Diamond
+    [4] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_4:12\124t","{rt4}"}, -- Triangle
+    [5] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_5:12\124t","{rt5}"}, -- Moon
+    [6] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_6:12\124t","{rt6}"}, -- Square
+    [7] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_7:12\124t","{rt7}"}, -- Cross
+    [8] = {"\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:12\124t","{rt8}"}  -- Skull
 }
 
 --| Output: Target has Amount stacks of [Spell]. |--
@@ -1216,11 +1240,41 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                 elseif contains(spellsCast,spellName) or contains(spellsCast,spellId) then
                     if(spellName == "Aura Mastery") then
                         for _,aura in ipairs(paladinAuras) do
-                            for i=1,GetNumGroupMembers() do
-                                if UnitBuff("raid"..i, aura) then
-                                    local caster = select(8, UnitBuff("raid"..i, aura))
-                                    if UnitName(caster) == UnitName("raid"..i) and UnitName(caster) == sourceName then
-                                        self:ReportAuraMasteryCast(sourceName,spellId,aura)
+                            if UnitInRaid(sourceName) then
+                                for i=1,40 do
+                                    if UnitBuff("raid"..i, aura) then
+                                        local caster = select(8, UnitBuff("raid"..i, aura))
+                                        if caster then
+                                            local cName = UnitName(caster)
+                                            local uName = UnitName("raid"..i)
+                                            if cName == uName and cName == sourceName then
+                                                self:ReportAuraMasteryCast(sourceName,spellId,aura)
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                            elseif UnitInParty(sourceName) then
+                                if UnitBuff("player", aura) then
+                                    local caster = select(8, UnitBuff("player", aura))
+                                    if caster then
+                                        local cName = UnitName(caster)
+                                        if cName == pName and cName == sourceName then
+                                            self:ReportAuraMasteryCast(sourceName,spellId,aura)
+                                        end
+                                    end
+                                end
+                                for i=1,4 do
+                                    if UnitBuff("party"..i, aura) then
+                                        local caster = select(8, UnitBuff("party"..i, aura))
+                                        if caster then
+                                            local cName = UnitName(caster)
+                                            local uName = UnitName("party"..i)
+                                            if cName == uName and cName == sourceName then
+                                                self:ReportAuraMasteryCast(sourceName,spellId,aura)
+                                                break
+                                            end
+                                        end
                                     end
                                 end
                             end
@@ -1229,11 +1283,76 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                         self:ReportCast(sourceName,spellId)
                     end
                 elseif (self.Settings["REPORT_TANKCDS"] and contains(tankCooldownsCast,spellName)) or
-                       (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCast,spellName)) then
+                        (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCast,spellName)) then
                     self:ReportCast(sourceName,spellId)
                 elseif (contains(spellsCastOnTarget,spellName)) or
-                       (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCastOnTarget,spellName)) then
-                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                        (self.Settings["REPORT_OTHERSPELLS"] and contains(otherSpellsCastOnTarget,spellName)) then
+                    if UnitInRaid(sourceName) then
+                        for i=1,40 do
+                            local uName = UnitName("raid"..i)
+                            local uTarName = UnitName("raid"..i.."target")
+                            if destName == uName then
+                                local icon = GetRaidTargetIndex("raid"..i)
+                                if icon and contains(raidTargetIcons,icon,true) then
+                                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                                    break
+                                else
+                                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                                    break
+                                end
+                            elseif destName == uTarName then
+                                local icon = GetRaidTargetIndex("raid"..i.."target")
+                                if icon and contains(raidTargetIcons,icon,true) then
+                                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                                    break
+                                else
+                                    self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                                    break
+                                end
+                            end
+                        end
+                    elseif UnitInParty(sourceName) then
+                        local tarName = UnitName("target")
+                        if destName == pName then
+                            local icon = GetRaidTargetIndex("player")
+                            if icon and contains(raidTargetIcons,icon,true) then
+                                self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                            else
+                                self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                            end
+                        elseif destName == tarName then
+                            local icon = GetRaidTargetIndex("target")
+                            if icon and contains(raidTargetIcons,icon,true) then
+                                self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                            else
+                                self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                            end
+                        else
+                            for i=1,4 do
+                                local uName = UnitName("party"..i)
+                                local uTarName = UnitName("party"..i.."target")
+                                if destName == uName then
+                                    local icon = GetRaidTargetIndex("party"..i)
+                                    if icon and contains(raidTargetIcons,icon,true) then
+                                        self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                                        break
+                                    else
+                                        self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                                        break
+                                    end
+                                elseif destName == uTarName then
+                                    local icon = GetRaidTargetIndex("party"..i.."target")
+                                    if icon and contains(raidTargetIcons,icon,true) then
+                                        self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
+                                        break
+                                    else
+                                        self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
                 end
             elseif contains(spellsBossCastOnTarget,spellName) then
                 self:ReportBossCastOnTarget(spellId,destName)
@@ -1532,8 +1651,12 @@ end
 function MPR:ReportCast(UNIT,SPELL) -- Unit casts [Spell].
     self:HandleReport(string.format("%s casts %s",UNIT,spell(SPELL,true)), string.format("%s casts %s",unit(UNIT),spell(SPELL)))
 end
-function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL) -- Unit casts [Spell] on Target.
-    self:HandleReport(string.format("%s casts %s on %s",UNIT,spell(SPELL,true),TARGET), string.format("%s casts %s on %s",unit(UNIT),spell(SPELL),unit(TARGET)))
+function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL,ICON) -- Unit casts [Spell] on Target.
+    if ICON then
+        self:HandleReport(string.format("%s casts %s on %s %s",UNIT,spell(SPELL,true),ICON[2],TARGET), string.format("%s casts %s on %s %s",unit(UNIT),spell(SPELL),ICON[1],unit(TARGET)))
+    else
+        self:HandleReport(string.format("%s casts %s on %s",UNIT,spell(SPELL,true),TARGET), string.format("%s casts %s on %s",unit(UNIT),spell(SPELL),unit(TARGET)))
+    end
 end
 function MPR:ReportAuraMasteryCast(UNIT,SPELL,AURA) -- Unit casts [Spell] (Aura).
     self:HandleReport(string.format("%s casts %s (%s)",UNIT,spell(SPELL,true),spell(AURA)), string.format("%s casts %s (%s)",unit(UNIT),spell(SPELL),spell(AURA)))
@@ -1582,7 +1705,7 @@ function MPR:ReportCombatResurrect(UNIT,SPELL,TARGET) -- Unit prepares [Spell].
 end
 
 function MPR:ReportValkyrGrab(UNIT) -- X Unit grabbed! X
-    self:HandleReport(string.format("{rt7} %s grabbed! {rt7}",UNIT),string.format("{rt7} %s grabbed! {rt7}",unit(UNIT)))
+    self:HandleReport(string.format(raidTargetIcons[7][2] .. " %s grabbed! " .. raidTargetIcons[7][2],UNIT),string.format(raidTargetIcons[7][1] .. " %s grabbed! " .. raidTargetIcons[7][1],unit(UNIT)))
 end
 
 function MPR:CanReportToRaid()
@@ -1895,6 +2018,7 @@ function MPR:PLAYER_ENTERING_WORLD()
     if IsInGuild() then
         SendAddonMessage("MPR", "request-version", "GUILD")
     end
+    pName = UnitName("player")
     self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
