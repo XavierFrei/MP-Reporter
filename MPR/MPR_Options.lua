@@ -11,6 +11,16 @@ local raidIcons = {
     "\124TInterface\\TargetingFrame\\UI-RaidTargetingIcon_8:12\124t : {rt8} or {skull}"
 }
 
+local function concatTables(t, ...)
+    local new = {unpack(t)}
+    for _,v in ipairs({...}) do
+        for _,w in ipairs(v) do
+            new[#new+1] = w
+        end
+    end
+    return new
+end
+
 local framecount = 0
 function GetNewID()
     framecount = framecount + 1
@@ -622,14 +632,4 @@ function MPR_Options:ShowGameTooltip(owner, content, text)
         GameTooltip:AddLine(content,1,1,1,1)
     end
     GameTooltip:Show()
-end
-
-function concatTables(t, ...)
-    local new = {unpack(t)}
-    for _,v in ipairs({...}) do
-        for _,w in ipairs(v) do
-            new[#new+1] = w
-        end
-    end
-    return new
 end

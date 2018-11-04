@@ -1249,7 +1249,6 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                                             local uName = UnitName("raid"..i)
                                             if cName == uName and cName == sourceName then
                                                 self:ReportAuraMasteryCast(sourceName,spellId,aura)
-                                                break
                                             end
                                         end
                                     end
@@ -1272,7 +1271,6 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                                             local uName = UnitName("party"..i)
                                             if cName == uName and cName == sourceName then
                                                 self:ReportAuraMasteryCast(sourceName,spellId,aura)
-                                                break
                                             end
                                         end
                                     end
@@ -1291,7 +1289,7 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                         for i=1,40 do
                             local uName = UnitName("raid"..i)
                             local uTarName = UnitName("raid"..i.."target")
-                            if destName == uName then
+                            if uName and destName == uName then
                                 local icon = GetRaidTargetIndex("raid"..i)
                                 if icon and contains(raidTargetIcons,icon,true) then
                                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
@@ -1300,7 +1298,7 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                                     break
                                 end
-                            elseif destName == uTarName then
+                            elseif uTarName and destName == uTarName then
                                 local icon = GetRaidTargetIndex("raid"..i.."target")
                                 if icon and contains(raidTargetIcons,icon,true) then
                                     self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
@@ -1320,7 +1318,7 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                             else
                                 self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
                             end
-                        elseif destName == tarName then
+                        elseif tarName and destName == tarName then
                             local icon = GetRaidTargetIndex("target")
                             if icon and contains(raidTargetIcons,icon,true) then
                                 self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
@@ -1331,16 +1329,14 @@ function MPR:COMBAT_LOG_EVENT_UNFILTERED(...)
                             for i=1,4 do
                                 local uName = UnitName("party"..i)
                                 local uTarName = UnitName("party"..i.."target")
-                                if destName == uName then
+                                if uName and destName == uName then
                                     local icon = GetRaidTargetIndex("party"..i)
                                     if icon and contains(raidTargetIcons,icon,true) then
                                         self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
-                                        break
                                     else
                                         self:ReportPlayerCastOnTarget(sourceName,destName,spellId)
-                                        break
                                     end
-                                elseif destName == uTarName then
+                                elseif uTarName and destName == uTarName then
                                     local icon = GetRaidTargetIndex("party"..i.."target")
                                     if icon and contains(raidTargetIcons,icon,true) then
                                         self:ReportPlayerCastOnTarget(sourceName,destName,spellId,raidTargetIcons[icon])
@@ -1626,81 +1622,81 @@ function MPR:FormatKillingBlow(Player,Target,Ability,Amount,Overkill,Critical)
 end
 
 --[[ SWING_DAMAGE, SPELL_DAMAGE, SPELL_PERIODIC_DAMAGE, SPELL_HEAL, SPELL_PERIODIC_HEAL ]]--
-function MPR:ReportSpellDamage(SPELL,TARGET,AMOUNT,CRIT) -- [Spell] hits Target for Amount [(Critical)].
+function MPR:ReportSpellDamage(SPELL,TARGET,AMOUNT,CRIT) -- [Spell] hits Target for Amount [(Critical)]
     local CRIT = CRIT and " (Critical)" or ""
     self:HandleReport(nil, string.format("%s hits %s for %s%s",spell(SPELL),unit(TARGET),numformat(AMOUNT),CRIT))
 end
-function MPR:ReportSpellHeal(SPELL,TARGET,AMOUNT,CRIT) -- [Spell] heals Target for Amount [(Critical)].
+function MPR:ReportSpellHeal(SPELL,TARGET,AMOUNT,CRIT) -- [Spell] heals Target for Amount [(Critical)]
     local CRIT = CRIT and " (Critical)" or ""
     self:HandleReport(string.format("%s heals %s for %s%s",spell(SPELL,true),TARGET,numformat(AMOUNT),CRIT), string.format("%s heals %s for %s%s",spell(SPELL),unit(TARGET),numformat(AMOUNT),CRIT))
 end
-function MPR:ReportDamageOnTarget(UNIT,TARGET,SPELL) -- Unit damages Target with [Spell].
+function MPR:ReportDamageOnTarget(UNIT,TARGET,SPELL) -- Unit damages Target with [Spell]
     self:HandleReport(nil, self:SelfReport(string.format("%s damages %s with %s",unit(UNIT),unit(TARGET),spell(SPELL))))
     -- string.format("%s damages %s with %s",UNIT,TARGET,spell(SPELL,true))
 end
 
 --[[ SPELL_SUMMON ]]--
-function MPR:ReportSummon(UNIT,TARGET,SPELL) -- Unit summons Target. [Spell].
+function MPR:ReportSummon(UNIT,TARGET,SPELL) -- Unit summons Target ([Spell])
     self:HandleReport(string.format("%s summons %s (%s)",UNIT,TARGET,spell(SPELL,true)), string.format("%s summons %s (%s)",unit(UNIT),unit(TARGET),spell(SPELL)))
 end
-function MPR:ReportBossSummon(TARGET,SPELL) -- Target summoned. [Spell]
-    self:HandleReport(string.format("%s summoned. (%s)",TARGET,spell(SPELL,true)), string.format("%s summoned. (%s)",unit(TARGET),spell(SPELL)))
+function MPR:ReportBossSummon(TARGET,SPELL) -- Target summoned ([Spell])
+    self:HandleReport(string.format("%s summoned (%s)",TARGET,spell(SPELL,true)), string.format("%s summoned (%s)",unit(TARGET),spell(SPELL)))
 end
 
 --[[ SPELL_CAST_START, SPELL_CAST_SUCCESS ]]--
-function MPR:ReportCast(UNIT,SPELL) -- Unit casts [Spell].
+function MPR:ReportCast(UNIT,SPELL) -- Unit casts [Spell]
     self:HandleReport(string.format("%s casts %s",UNIT,spell(SPELL,true)), string.format("%s casts %s",unit(UNIT),spell(SPELL)))
 end
-function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL,ICON) -- Unit casts [Spell] on Target.
+function MPR:ReportPlayerCastOnTarget(UNIT,TARGET,SPELL,ICON) -- Unit casts [Spell] on {RaidIcon} Target
     if ICON then
         self:HandleReport(string.format("%s casts %s on %s %s",UNIT,spell(SPELL,true),ICON[2],TARGET), string.format("%s casts %s on %s %s",unit(UNIT),spell(SPELL),ICON[1],unit(TARGET)))
     else
         self:HandleReport(string.format("%s casts %s on %s",UNIT,spell(SPELL,true),TARGET), string.format("%s casts %s on %s",unit(UNIT),spell(SPELL),unit(TARGET)))
     end
 end
-function MPR:ReportAuraMasteryCast(UNIT,SPELL,AURA) -- Unit casts [Spell] (Aura).
+function MPR:ReportAuraMasteryCast(UNIT,SPELL,AURA) -- Unit casts [Spell] (Aura)
     self:HandleReport(string.format("%s casts %s (%s)",UNIT,spell(SPELL,true),spell(AURA)), string.format("%s casts %s (%s)",unit(UNIT),spell(SPELL),spell(AURA)))
 end
 
 --[[ SPELL_AURA_APPLIED ]]--
-function MPR:ReportBossCastOnTarget(SPELL,TARGET) -- [Spell] on Target.
+function MPR:ReportBossCastOnTarget(SPELL,TARGET) -- [Spell] on Target
     self:HandleReport(string.format("%s on %s",spell(SPELL,true),TARGET), string.format("%s on %s",spell(SPELL),unit(TARGET)))
 end
-function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target.
+function MPR:ReportAppliedOnTarget(SPELL,TARGET) -- [Spell] applied on Target
     self:HandleReport(string.format("%s applied on %s",spell(SPELL,true),TARGET), string.format("%s applied on %s",spell(SPELL),unit(TARGET)))
 end
-function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item].
+function MPR:ReportItemUsed(UNIT,ITEM)  -- Unit used [Item]
     self:HandleReport(string.format("%s used %s",UNIT,item(ITEM)), string.format("%s used %s",unit(UNIT),item(ITEM)))
 end
-function MPR:ReportApplied(UNIT,SPELL) -- Unit gains [Spell].
+function MPR:ReportApplied(UNIT,SPELL) -- Unit gains [Spell]
     self:HandleReport(string.format("%s gains %s",UNIT,spell(SPELL,true)), string.format("%s gains %s",unit(UNIT),spell(SPELL)))
 end
-function MPR:ReportProcced(UNIT,SPELL) -- [Spell] procced on Unit.
+function MPR:ReportProcced(UNIT,SPELL) -- [Spell] procced on Unit
     self:HandleReport(string.format("%s procced on %s",spell(SPELL,true),UNIT), string.format("%s procced on %s",spell(SPELL),unit(UNIT)))
 end
 
 --[[ SPELL_AURA_APPLIED_DOSE ]]--
-function MPR:ReportStacksOnTarget(TARGET,SPELL,AMOUNT) -- Target has Amount stacks of [Spell].
+function MPR:ReportStacksOnTarget(TARGET,SPELL,AMOUNT) -- Target has Amount stacks of [Spell]
     self:HandleReport(string.format("%s has %i stacks of %s",TARGET,AMOUNT,spell(SPELL,true)), string.format("%s has %i stacks of %s",unit(TARGET),AMOUNT,spell(SPELL)))
 end
 
 --[[ SPELL_DISPEL ]]--
-function MPR:ReportDispel(UNIT,TARGET,SPELL) -- Unit dispels [Spell] from Target.
+function MPR:ReportDispel(UNIT,TARGET,SPELL) -- Unit dispels Target ([Spell])
     self:HandleReport(string.format("%s dispels %s (%s)",UNIT,TARGET,spell(SPELL,true)), string.format("%s dispels %s (%s)",unit(UNIT),unit(TARGET),spell(SPELL)))
 end
 
 --[[ PARRY_HASTE ]]--
-function MPR:ReportParryHaste(UNIT,TARGET) -- Unit has caused a PARRY by Target.
+function MPR:ReportParryHaste(UNIT,TARGET) -- Unit has caused a PARRY by Target
     self:HandleReport(string.format("%s has caused a PARRY by %s",UNIT,TARGET), string.format("%s has caused a PARRY by %s",unit(UNIT),TARGET))
 end
 
 --[[ SPELL_CREATE ]]--
-function MPR:ReportSpellCreate(UNIT,SPELL) -- Unit prepares [Spell].
+function MPR:ReportSpellCreate(UNIT,SPELL) -- Unit prepares [Spell]
     self:HandleReport(string.format("%s prepares %s",UNIT,spell(SPELL,true)), string.format("%s prepares %s",unit(UNIT),spell(SPELL)))
 end
 
---[[ SPELL_RESURRECT ]]-- only dudu ress
-function MPR:ReportCombatResurrect(UNIT,SPELL,TARGET) -- Unit prepares [Spell].
+--[[ SPELL_RESURRECT ]]-- only Druid Rebirth
+function MPR:ReportCombatResurrect(UNIT,SPELL,TARGET) -- Unit resurrects Target ([Spell])
     self:HandleReport(string.format("%s resurrects %s (%s)",UNIT,TARGET,spell(SPELL,true)), string.format("%s resurrects %s (%s)",unit(UNIT),unit(TARGET),spell(SPELL)))
 end
 
@@ -1724,7 +1720,7 @@ function MPR:HandleReport(Unformatted, Formatted, IgnoreRaidSettings, WithoutCha
             self:PartyReport(Unformatted)
         end
     elseif Formatted and self.Settings["SELF"] then
-        self:SelfReport(Formatted)
+        self:SelfReport(Formatted,true)
     end
 end
 
@@ -2011,15 +2007,10 @@ function MPR:ADDON_LOADED(addon)
         self:ClearCombatLog(true)
     end
     self:RegisterEvents()
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
-end
-
-function MPR:PLAYER_ENTERING_WORLD()
     if IsInGuild() then
         SendAddonMessage("MPR", "request-version", "GUILD")
     end
     pName = UnitName("player")
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 MPR:RegisterEvent("ADDON_LOADED")
